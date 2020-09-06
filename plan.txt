@@ -1,0 +1,33 @@
+
+     {
+       data: T,
+       path: PathBuf,
+       dirty: bool
+     }
+
+
+
+
+Pack
+ |
+ ---------> PackGuard
+ 
+ 
+ 2 ways:
+ =======
+   - designing to save it as fast as possible
+   - make each save process as a stand alone one with its own result
+   - or queue all the save requests and save the last one, and with this
+     approach make it different processes. Return immediately the result,
+     which doesnt contain any detail about the outcome of file save,
+     and try the save process in the background. But what happens if the
+     save process could not managed? Should we have a safety plan for
+     this situation, and after a few unsuccessful trial we should
+     make an auto emergency save?
+     
+     
+The way we save files
+=====================
+  - Writing bytes into a file is safe.
+  - Until we brake the process during the buffer writing process. In this
+    case the file is going to became corrupted.

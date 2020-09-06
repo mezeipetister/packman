@@ -1,0 +1,51 @@
+Block size: 4kbyte => 4_096 byte => ~ 1_000 u32
+
+*------------*
+|            |
+|   BLOCK    |
+|   4KiB     |
+*------------*
+
+Superblock => info about the storage
+data blocks bitmap => 
+inode bitmap
+inodes
+data sectors
+
+
+---
+
+
+meta 4 kib?
+
+inodes
+
+data blocks 4 kib
+
+
+VecPackT
+  [..][..][..][..][..][..] .. [..]
+    \
+     \
+      *----Pack<T> .as_mut().unpack() -> PackGuard<T> {..}
+                                            |
+                                            |
+                                            *--- when Drop() -> (&mut self).update_inode(&self)?
+                                            
+                                            
+What needed
+===========
+  - store data type T
+  - journal, copy on write (COW) or (ROW)
+  
+Benefit
+=======
+  - controlled file numbers (1)
+  - controlled ROW, or journal write
+  - Object version management
+  - faster backup, as single file
+  - memory efficiency
+  - in-memory, file, or hybrid data storage
+  - T conversion
+  - self healthcheck
+  - controlled storage creation

@@ -1,0 +1,293 @@
+                                   Storage<T>
+                           development documentation
+
+IMPORTANT
+
+    *   Should be renamed
+
+        Storage<T> is too long. Rust variables basically views between 3 and
+        5-6 characters. Vec, Box, i32, u32, HashMap, HashSet, ...
+        e.g.: Bag<T> could be fine.
+
+        Name ideas:
+            
+            * Storage<T>|    
+            * Store<T>  |
+            * Strg<T>   |
+            * Bag<T>    |   (L)     * * * * *
+            * Bg<T>     |
+            * Dal<T>    | 
+            * Fd<T>     |
+            * Data<T>   |
+            * Dt<T>     |
+            * Dta<T>    |
+            * Peel<T>   |   (L)     * * *
+            * Shell<T>  |
+            * Shl<T>    |
+            * Rind<T>   |
+            * Layer<T>  |
+            * Sack<T>   |
+            * Pack<T>   |   (L)     * * * * *
+            * Pop<T>    |
+            * Pod<T>
+
+Issues to solve
+===============
+
+    * Delete item?
+        
+        Delete item from FS and from Memory. Vec item could be removed,
+        but a single Pop?
+
+        Example
+
+            impl<T, I> Vec<Pack<T>> {
+                pub fn remove_item_by_id(&mut self, id: I) {..}
+            }
+
+    * Move item between storages?
+
+        Move one Pack<T> from one storage to another one,
+        when both of them has the same type T.
+
+        This should be a kind of create new and remove the old one.
+
+    * Single file storage
+
+        Should be able to use a single file as a storage; in cases when we do
+        not need any vector of the same type files.
+
+        E.g.: config files, or helper files like let mut units: Pack<Units> =
+        Pack::load_or_init("path")?;
+
+    * Issue with single file storage
+
+        How can we use a default implementation when the file does not exist
+        yet? I mean we have a user conig, but we have a new user.
+
+    * Pack::from_storage(&storageA)?;
+
+
+
+    * Schema versions?
+
+        Migrate easily and safely from one schema to a new one. Using easy
+        development process to be sure, a schema has a schema backup history, so
+        it can be up from older shcema automatically.
+
+        In the recent version we use a kind of ~~ load_from() ~~ method, but it
+        is not soo easy and not soo clear to use.
+
+    * OBJECT ID any type? Not just &str
+    * OBJECT ID automatic generation
+    * Multy THREAD? Prevent racecondition
+
+    * Pack as a struct field?
+
+    struct Repository {
+        #[path="/config"]
+        config: Pack<Config>,
+        #[path="/users"]
+        users: Vec<Pack<User>>,
+        #[path="/issues"]
+        issues: Vec<Pack<Issue>>,
+        ..
+    }
+
+    impl Repository {
+        pub fn new(id: &str) -> PackResult<Self, Error> {
+            let storage = Storage::load_or_init("data/repositories/", id);
+            Repository {
+                config: storage.file_from("config")?,
+                users: storage.folder_from("./users/")?,
+                issues: storage.folder_from("./folder")?
+            }
+        }
+    }
+
+Ideas
+
+    A few ideas about the required design:
+
+    struct Pack<T> {
+        data: T,
+        path: &'static str
+    }
+
+    impl<T> Deref for Pack<T> {..}
+             |
+             |
+             *---  Implementing deref() means we can access the inner DATA
+                   READ ONLY.
+
+    struct Guard<'a, T> {
+        data: &'a mut T,
+        path: &'static str
+    }
+
+    impl<'a, T> Deref for Guard<'a, T> {..}
+
+    impl<'a, T> DerefMut for Guard<'a, T> {..}
+                    |
+                    |
+                    *---    Implementing deref_mut() means we have acces for
+                            inner DATA as MUTABLE.
+
+    impl<'a, T> Drop for Guard<'a, T> {..}
+                 |
+                 |
+                 *---  Drop Guard<'a, T> automatically, and perform File save
+                       on DATA OBJECT
+
+    struct VecPack<T> {
+        data: Vec<Pack<T>>,
+        path: &'static str
+    }
+
+Init a Pack OBJECT
+
+    Pack should be inited by loading from path, or create and save a new copy by
+    its storage.
+
+    e.g.:
+
+        let config: Pack<Config> = Pack::load_from_path("path")?;
+
+        let products: Vec<Pack<Product>> = Pack::load_from_path("path")?;
+                |
+                |
+                *--- and then --> products.add_new(new_product)?;
+
+        let config: Pack<Config> = Pack::load_or_init("path")?;
+
+Pack variants
+
+    Pack<T>
+    PackVec<T>
+    ---
+    Vec<Pack<T>>
+    HashMap<String, Pack<T>>
+
+    let mut m = Storage::new("data");
+    m.add(&mut Vec<Pack<T>>, T);
+
+    let products: Storage<Pack<Product>> = Storage::load_or_init(..)?;
+    products.push(new_product1)?;
+    products.push(new_product2)?;
+
+    let mut products: PackVec<Product> = PackVec::new("/data/products");
+    products.push(new_product1)?;
+    products.push(new_product2)?;
+
+    Pack<T>
+    
+        +   deref(&self)  -> &T
+        +   deref_mut(&mut self) -> &mut T
+        +   save(&self) -> PackResult<()>
+        +   update(&mut self, f: FnMut) -> R
+        +   get(&self, f: Fn) -> R
+        +   map(&self, f: F) -> R
+
+        ::  load(path: &'static str) -> PackResult<Pack<T>>
+        ::  load_or_init(path: &'static str) -> PackResult<Pack<T>>
+
+        fn <T>try_load() -> PackResult<Pack<T>>
+        where
+            T: Serialize + Deserialize + TryFrom
+        -------------
+            1. Try open file
+            2. Try read file content to buffer
+            3. Try deserialize buffer to the given type
+                |
+                |
+                *-- If SUCCESS  => returns the Pack<T>
+                |
+                *-- If ERROR    => try From<previous_type>
+
+        pub trait TryLoad<T>
+        where
+            T: From<P>
+            P: Deserialize {
+            
+            fn <P>try_load() -> PackResult<P>
+        }
+
+        save()
+        -------------
+            1. Try serialize OBJECT DATA
+            2. Try write_all to the given path
+
+    VecPack<T>
+
+        + deref(&self) -> &Vec<Pack<T>>
+
+            It's like an iter().
+
+        ! deref_mut(&mut self) -> &mut Vec<Pack<T>>
+       
+            Ezt lehet nem kellene engedni
+            csak a VecPack<T> apin keresztül
+            Helyette iter_mut()
+
+        + push(&mut self, T) -> PackResult<ID>
+
+            Or add()..
+            Add a new elem into the VecPack<T>
+
+        + check_id_available(&self, id: ID) -> bool
+        
+        + push_with_id(&mut self, T, id: ID) -> PackResult<()>
+        
+        + get_by_id(id: I) -> Option<&Pack<T>>          / Option<&T>
+        
+        + get_mut_by_id(id: I) -> Option<&mut Pack<T>>  / Option<PackGuard<'_, T>>
+        
+        + iter() -> &Vec<Pack<T>>
+        
+        + into_iter(&mut self) -> &mut Vec<Pack<T>>
+       
+        + move(&mut self, index: I, to: D) -> PackResult<()>
+       
+        + remove(&mut self, index: I) -> PackResult<T>
+        
+        + get_path(&self) -> Path
+
+        let struct Repository {
+            id: String,
+            config: Pack<Config>,
+            users: PackVec<User>,
+            products: PackVec<Product>
+        }
+
+        let mut repositories: Pack<Vec<String>> =
+            Pack::load_or_init("/data/repositores")?;
+
+        let mut repos: Vec<Repository> = repositores
+                                            .iter()
+                                            .map(|r| i.init())
+                                            .collect();
+
+Pack methods
+
+    * save(&self) -> PackResult<Self>   <----- result Self is not sure
+    *
+
+
+    let product_storage: Storage<Product> = Storage::load_or_init("/products")?;
+    let p1 = product_storage.new(Product::new())?;
+
+    let mut products: Vec<Pack<Product>> = Vec::new();
+    products.push(p1);
+
+
+Storage<Vec<Pack<T>>>
+
+Schema Version Management (SVM)
+
+    We need an easy to use solution to manage schema updates and data migration
+    with ZERO ERROR.
+    
+    trait TryFrom {
+        type From: TryFrom;
+        fn try_from() -> PackResult<Self> {}
+    }

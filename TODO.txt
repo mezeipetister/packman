@@ -1,0 +1,25 @@
+IO::FILE
+& Storaget performance test
+
+Create a big struct with a million record. Test the load, creation, save and update performance.
+
+Results:
+  - IO save could damage data file, once I got a crashed and corrupted data file. Why?
+  - Data creation took ~50 sec, first save took ~7 sec, field update took ~7 sec.
+  - Data save should be a background process, and join many update queries into a single one.
+  - It should by async
+  - Should be save failure tolerant, and create backup when save object
+  - Serde serialization and deserialization takes too much RAM.
+    Big.yml takes ~160MB on disk, takes ~750MB in memory, but during the deserialization
+    it takes ~2.5GB in memory, and the same while serialization and save.
+
+Should be:
+  - Serialization and deserialization should not take too much memory as extra
+  - Object file save should be failure tolerant
+  - Should be async
+  - Should join many save request into one qeue and save just the last one
+  - Should clean up object space during init, and maybe in work sometimes
+  - Should manage millions of files per object space
+  - Should create auto backup during init
+  - Maybe we should use some kind of binary object representation on Disk
+  - PackGuard drop error handle; should use is_dirty fieldj

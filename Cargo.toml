@@ -1,0 +1,21 @@
+[package]
+authors = ["Peter Mezei <mezeipetister@gmail.com>"]
+description = "# Packman<T> file based in-memory database.\nStrongly MVP, big API changes are expected frequently.\nAs Storage<T> is rather experimental please do not use it for production."
+edition = "2018"
+homepage = "https://github.com/mezeipetister/packman"
+license = "MIT"
+name = "packman"
+repository = "https://github.com/mezeipetister/packman"
+version = "0.1.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = {version = "1.0", features = ["derive"]}
+serde_yaml = "0.8"
+# chrono = "0.4.0"
+# rand = "0.7.2"
+bincode = "1.3.1"
+nanoid = "0.3.0"
+[dev-dependencies]
+rand = "0.7.2"
