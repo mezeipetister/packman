@@ -76,6 +76,7 @@ pub enum PackError {
   /// ID Taken
   /// When VecPack ID not available
   IDTaken,
+  BincodeError(String),
 }
 
 // serde_yaml::Error to PackError
@@ -83,6 +84,12 @@ pub enum PackError {
 impl From<serde_yaml::Error> for PackError {
   fn from(from: serde_yaml::Error) -> Self {
     PackError::SerializeError(from.to_string())
+  }
+}
+
+impl From<Box<bincode::ErrorKind>> for PackError {
+  fn from(from: Box<bincode::ErrorKind>) -> Self {
+    PackError::BincodeError(from.to_string())
   }
 }
 
@@ -105,6 +112,7 @@ impl fmt::Display for PackError {
         write!(f, "Storage object not found in storage.")
       }
       PackError::IDTaken => write!(f, "VecPack ID already taken"),
+      PackError::BincodeError(err) => write!(f, "Bincode error {}", err),
     }
   }
 }
@@ -127,6 +135,7 @@ impl fmt::Debug for PackError {
         write!(f, "Storage object not found in storage.")
       }
       PackError::IDTaken => write!(f, "VecPack ID already taken"),
+      PackError::BincodeError(err) => write!(f, "Bincode error {}", err),
     }
   }
 }
