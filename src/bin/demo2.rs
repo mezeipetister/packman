@@ -1,4 +1,5 @@
 fn main() {
-  let res = bincode::serialize("hello bello").unwrap();
-  println!("Len is {}", std::mem::size_of_val(&res));
+  // packman::fs::create_packfile();
+  let a = packman::fs::PackFile::<u32>::from_path("demo_data").unwrap();
+  println!("{:?}", a.inodes[0]);
 }

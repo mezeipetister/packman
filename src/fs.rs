@@ -83,7 +83,7 @@ impl Superblock {
 }
 
 #[derive(Serialize, Deserialize, Debug, Default)]
-pub(crate) struct Inode {
+pub struct Inode {
   version: u64,        // Inode version, inrement one per data update
   offset: u64,         // Absolute offset of data bytes from the beginning
   size: u64,           // Data size in bytes
@@ -143,9 +143,13 @@ impl Inode {
   }
 }
 
-pub(crate) struct PackFile<T> {
+pub fn create_packfile() {
+  PackFile::<u32>::create_new("demo_data", 0, None, None, None).unwrap();
+}
+
+pub struct PackFile<T> {
   superblock: Option<Superblock>,
-  inodes: [Option<Inode>; 2],
+  pub inodes: [Option<Inode>; 2],
   file_ptr: MmapMut,
   data_type: PhantomData<*const T>,
 }
@@ -154,8 +158,21 @@ impl<T> PackFile<T> {
   fn try_load_data(&mut self) -> T {
     todo!()
   }
-  fn from_path(path: &str) -> PackResult<PackFile<T>> {
-    todo!()
+  pub fn from_path(path: &str) -> PackResult<PackFile<T>> {
+    let file = OpenOptions::new().read(true).write(true).open(path)?;
+    let mmap = unsafe { MmapMut::map_mut(&file)? };
+    let mut cursor = Cursor::new(&mmap);
+    let sb = Superblock::deserialize_from(&mut cursor)?;
+    cursor.seek(SeekFrom::Start(SUPERBLOCK_SIZE as u64))?;
+    let inode_a = Inode::deserialize_from(&mut cursor)?;
+    cursor.seek(SeekFrom::Start((SUPERBLOCK_SIZE + INODE_SIZE) as u64))?;
+    let inode_b = Inode::deserialize_from(&mut cursor)?;
+    Ok(PackFile {
+      superblock: Some(sb),
+      inodes: [Some(inode_a), Some(inode_b)],
+      file_ptr: mmap,
+      data_type: PhantomData,
+    })
   }
   fn save_data(&mut self, data: T) -> PackResult<T> {
     todo!()
@@ -164,13 +181,28 @@ impl<T> PackFile<T> {
   fn is_healthy(&mut self) -> bool {
     true
   }
-  pub(crate) fn new(path: &str) -> PackResult<PackFile<T>> {
-    let file = OpenOptions::new()
-      .read(true)
-      .write(true)
-      .create(true)
-      .open(path)?;
-    todo!();
+  pub fn create_new(
+    path: &str,
+    id: u64,
+    alias: Option<String>,
+    owner: Option<String>,
+    workspace_id: Option<u64>,
+  ) -> PackResult<()> {
+    let file = OpenOptions::new().write(true).create_new(true).open(path)?;
+    file.set_len((SUPERBLOCK_SIZE + INODE_SIZE * 2) as u64)?;
+    let mut buf = BufWriter::new(&file);
+    let mut sb = Superblock::new(id, alias, owner, workspace_id);
+    sb.serialize_into(&mut buf)?;
+
+    let mut inode = Inode::new(0, 0, 0, 0);
+
+    buf.seek(SeekFrom::Start(SUPERBLOCK_SIZE as u64))?;
+    inode.serialize_into(&mut buf)?; // save the first inode
+    buf.seek(SeekFrom::Start((SUPERBLOCK_SIZE + INODE_SIZE) as u64))?;
+    inode.serialize_into(&mut buf)?; // save the second infode
+
+    buf.flush()?;
+    Ok(())
   }
 }
 
