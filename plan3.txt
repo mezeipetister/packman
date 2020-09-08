@@ -1,0 +1,76 @@
+                                                                         
+ |-------------|                                                         
+ | Superblock  |                                                         
+ |-------------|                                                         
+ | Checksum A  |                                                         
+ |-------------|                                                         
+ | Checksum B  |                                                         
+ |-------------|                                                         
+ | Inode A     |                                                         
+ |-------------|                                                         
+ | Inode B     |                                                         
+ |-------------|                                                         
+ |             |                                                         
+ | Data        |                                                         
+ | Region      |                                                         
+ |             |                                                         
+ .             .                                                         
+ .             .                                                         
+ |             |                                                         
+ |-------------|                                                         
+                                                                         
+                                                                         
+                                                                         
+                                                                         
+                                                                         
+                                                                         
+                                                                         
+                                                                         
+                                                                         
+                                                                         
+
+struct Superblock {
+  id: u64,                    // Pack ID, maybe string (ASCII)?
+  workspace_id: Option<u64>,  // Workspace ID if has any
+  pack_version: u32,          // Pack version
+  date_created: u64           // Pack creation date
+  len: u64                    // Data len?
+}
+
+struct Inode {
+  version: u64,           // File version
+  date_created: u64,      // Object creation date
+  offset: u64,            // Cursor offset in byte
+  len: u64,               // Length of the byte stream in bytes
+  checksum: u64           // Data checksum to verify byte stream
+}
+
+BitMap [false, true]
+
+
+Steps to write
+==============
+  1. Read inode A
+  2. Read inode B
+  3. Select the old one
+  4. Find offset for byte stream
+  5. Calculate data checksum
+  6. Create new inode and save to the place of the old one
+  7. Write byte stream to the reserved offset
+  
+Steps to read
+=============
+  1. Read Superblock
+  2. Get ID and check workspace validity?
+  3. Read inodes (2)
+  4. Find the latest by version
+  5. Read data from the latest offset
+  6. Verify data by checksum
+  7. Try deserialize data to T
+  
+  
+Failover, backup
+================
+  - if superblock corrupted
+  - if inodes corrupt
+  - if data byte stream corrupted
