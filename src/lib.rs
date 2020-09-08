@@ -37,6 +37,8 @@ use std::iter::IntoIterator;
 use std::ops::{Deref, DerefMut};
 use std::path::{Path, PathBuf};
 
+mod fs;
+
 /// PackResult<T>
 ///
 /// Generic Pack result type

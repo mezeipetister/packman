@@ -34,15 +34,14 @@ struct Superblock {
   workspace_id: Option<u64>,  // Workspace ID if has any
   pack_version: u32,          // Pack version
   date_created: u64           // Pack creation date
-  len: u64                    // Data len?
 }
 
 struct Inode {
   version: u64,           // File version
   date_created: u64,      // Object creation date
   offset: u64,            // Cursor offset in byte
-  len: u64,               // Length of the byte stream in bytes
-  checksum: u64           // Data checksum to verify byte stream
+  size: u64,              // Length of the byte stream in bytes
+  checksum: u32           // Data checksum to verify byte stream
 }
 
 BitMap [false, true]
@@ -72,5 +71,41 @@ Steps to read
 Failover, backup
 ================
   - if superblock corrupted
-  - if inodes corrupt
+  - if inodes corrupted
   - if data byte stream corrupted
+  
+  
+  
+==========================================================================
+                                                                         
+ |-----------|                Version 2                                   
+ | Super-    |                                                           
+ | block     |          Superblock                                       
+ |-----------|            - id                                           
+ | Inode A   |            - packman version                              
+ |-----------|            - date created                                 
+ | Inode B   |            - workspace_id                                 
+ |-----------|            - owner                                        
+ |           |          Inode                                            
+ | Data      |            - version                                      
+ | Region    |            - offset                                       
+ |           |            - size                                         
+ |-----------|            - date_created                                 
+                          - checksum                                     
+                                                                         
+                                                                         
+                                                                         
+                                                                         
+                                                                         
+                                                                         
+                                                                         
+                                                                         
+                                                                         
+                                                                         
+                                                                         
+                                                                         
+                                                                         
+                                                                         
+                                                                         
+                                                                         
+                                                                         
