@@ -103,6 +103,15 @@ impl Inode {
       checksum_data,
     }
   }
+  pub fn get_version(&self) -> u64 {
+    self.version
+  }
+  pub fn get_offset(&self) -> u64 {
+    self.offset
+  }
+  pub fn get_size(&self) -> u64 {
+    self.size
+  }
   #[allow(dead_code)]
   pub fn serialize(&mut self) -> PackResult<Vec<u8>> {
     self.checksum();
@@ -147,16 +156,32 @@ pub fn create_packfile() {
   PackFile::<u32>::create_new("demo_data", 0, None, None, None).unwrap();
 }
 
-pub struct PackFile<T> {
+pub struct PackFile<T>
+where
+  for<'de> T: Serialize + Deserialize<'de>,
+{
   superblock: Option<Superblock>,
-  pub inodes: [Option<Inode>; 2],
+  pub inodes: [Inode; 2],
   file_ptr: MmapMut,
   data_type: PhantomData<*const T>,
 }
 
-impl<T> PackFile<T> {
-  fn try_load_data(&mut self) -> T {
-    todo!()
+impl<T> PackFile<T>
+where
+  for<'de> T: Serialize + Deserialize<'de>,
+{
+  pub fn try_load_data(&mut self) -> PackResult<T> {
+    let latest_inode_offset = self.get_latest_inode().get_offset();
+    let latest_inode_size = self.get_latest_inode().get_size();
+    println!("{}, {}", latest_inode_offset, latest_inode_size);
+    let mut cursor = Cursor::new(self.file_ptr.as_mut());
+    cursor.seek(SeekFrom::Start(latest_inode_offset))?;
+    let mut d: Vec<u8> = Vec::new();
+    d.resize(latest_inode_size as usize, 0);
+    cursor.read(&mut d)?;
+    println!("{:?}", d);
+    let data_obj: T = bincode::deserialize(&d)?;
+    Ok(data_obj)
   }
   pub fn from_path(path: &str) -> PackResult<PackFile<T>> {
     let file = OpenOptions::new().read(true).write(true).open(path)?;
@@ -169,7 +194,7 @@ impl<T> PackFile<T> {
     let inode_b = Inode::deserialize_from(&mut cursor)?;
     Ok(PackFile {
       superblock: Some(sb),
-      inodes: [Some(inode_a), Some(inode_b)],
+      inodes: [inode_a, inode_b],
       file_ptr: mmap,
       data_type: PhantomData,
     })
@@ -189,7 +214,7 @@ impl<T> PackFile<T> {
     workspace_id: Option<u64>,
   ) -> PackResult<()> {
     let file = OpenOptions::new().write(true).create_new(true).open(path)?;
-    file.set_len((SUPERBLOCK_SIZE + INODE_SIZE * 2) as u64)?;
+    file.set_len((SUPERBLOCK_SIZE + INODE_SIZE * 2 * 10) as u64)?;
     let mut buf = BufWriter::new(&file);
     let mut sb = Superblock::new(id, alias, owner, workspace_id);
     sb.serialize_into(&mut buf)?;
@@ -204,6 +229,82 @@ impl<T> PackFile<T> {
     buf.flush()?;
     Ok(())
   }
+  fn get_latest_inode(&self) -> &Inode {
+    use InodePosition::*;
+    match self.get_latest_inode_position() {
+      First => &self.inodes[0],
+      Second => &self.inodes[1],
+    }
+  }
+  fn get_backup_inode(&self) -> &Inode {
+    use InodePosition::*;
+    match self.get_latest_inode_position() {
+      First => &self.inodes[1],
+      Second => &self.inodes[0],
+    }
+  }
+  fn get_latest_inode_position(&self) -> InodePosition {
+    use InodePosition::*;
+    if self.inodes[0].get_version() > self.inodes[1].get_version() {
+      return First;
+    } else {
+      return Second;
+    }
+  }
+  // Returns (offset in bytes, size in bytes)
+  fn allocate_data(&self, data: &T) -> PackResult<(u64, u64)> {
+    let required_size = bincode::serialized_size(&data)?;
+    if self.get_latest_inode().get_offset() == 0 {
+      return Ok((
+        (SUPERBLOCK_SIZE + 2 * INODE_SIZE) as u64 + 1,
+        required_size,
+      ));
+    }
+    if self.get_latest_inode().get_offset()
+      - (SUPERBLOCK_SIZE + 2 * INODE_SIZE) as u64
+      > required_size
+    {
+      return Ok((
+        (SUPERBLOCK_SIZE + 2 * INODE_SIZE) as u64 + 1,
+        required_size,
+      ));
+    } else {
+      return Ok((
+        (self.get_latest_inode().get_offset()
+          + self.get_latest_inode().get_size()
+          + 1),
+        required_size,
+      ));
+    }
+  }
+  pub fn write_data(&mut self, data: &T) -> PackResult<()> {
+    let latest_position = self.get_latest_inode_position();
+    let latest_inode = self.get_latest_inode();
+    let (offset, size) = self.allocate_data(&data)?;
+    let checksum_data = util::calculate_checksum(&data);
+    let mut new_inode =
+      Inode::new(latest_inode.get_version() + 1, offset, size, checksum_data);
+    let mut cursor = Cursor::new(self.file_ptr.as_mut());
+    match latest_position {
+      InodePosition::First => {
+        cursor.seek(SeekFrom::Start((SUPERBLOCK_SIZE + INODE_SIZE) as u64))?;
+      }
+      InodePosition::Second => {
+        cursor.seek(SeekFrom::Start(SUPERBLOCK_SIZE as u64))?;
+      }
+    };
+    // Write inode to disk
+    new_inode.serialize_into(&mut cursor)?;
+    cursor.seek(SeekFrom::Start(offset))?;
+    bincode::serialize_into(&mut cursor, &data)?;
+    cursor.flush()?;
+    Ok(())
+  }
+}
+
+enum InodePosition {
+  First,
+  Second,
 }
 
 mod util {
