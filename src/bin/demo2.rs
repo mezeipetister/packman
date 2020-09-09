@@ -14,10 +14,10 @@ impl Customer {
 
 fn main() {
   // packman::fs::create_packfile();
-  let customer = Customer::new("Mezei Peti".into(), 31);
+  let customer = Customer::new("Peti".into(), 31);
   let mut a =
     packman::fs::PackFile::<Customer>::from_path("demo_data").unwrap();
-  // a.write_data(&customer);
+  a.write_data(&customer);
   println!("{:?}, {:?}", a.inodes[0], a.inodes[1]);
   println!("Data is {:?}", a.try_load_data().unwrap());
 }

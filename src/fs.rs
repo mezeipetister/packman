@@ -214,7 +214,7 @@ where
     workspace_id: Option<u64>,
   ) -> PackResult<()> {
     let file = OpenOptions::new().write(true).create_new(true).open(path)?;
-    file.set_len((SUPERBLOCK_SIZE + INODE_SIZE * 2 * 10) as u64)?;
+    file.set_len((SUPERBLOCK_SIZE + INODE_SIZE * 2) as u64)?;
     let mut buf = BufWriter::new(&file);
     let mut sb = Superblock::new(id, alias, owner, workspace_id);
     sb.serialize_into(&mut buf)?;
@@ -278,8 +278,10 @@ where
     }
   }
   pub fn write_data(&mut self, data: &T) -> PackResult<()> {
+    let current_file_len = self.file_ptr.len();
     let latest_position = self.get_latest_inode_position();
     let latest_inode = self.get_latest_inode();
+    let latest_inode_offset = latest_inode.get_offset();
     let (offset, size) = self.allocate_data(&data)?;
     let checksum_data = util::calculate_checksum(&data);
     let mut new_inode =
@@ -295,6 +297,24 @@ where
     };
     // Write inode to disk
     new_inode.serialize_into(&mut cursor)?;
+
+    // Resize the file if needed
+    if new_inode.get_offset() > latest_inode_offset {
+      if current_file_len
+        <= (new_inode.get_offset() + new_inode.get_size()) as usize
+      {
+        let mut v = Vec::new();
+        v.resize(
+          new_inode.get_offset() as usize + new_inode.get_size() as usize,
+          0,
+        );
+        println!("From {}, to {}", current_file_len, v.len());
+        cursor.seek(SeekFrom::Start(current_file_len as u64))?;
+        cursor.write_all(&v)?;
+        cursor.flush()?;
+      }
+    }
+
     cursor.seek(SeekFrom::Start(offset))?;
     bincode::serialize_into(&mut cursor, &data)?;
     cursor.flush()?;
