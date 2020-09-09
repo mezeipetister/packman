@@ -7,7 +7,7 @@ use std::io;
 use std::io::prelude::*;
 use std::io::Cursor;
 use std::io::SeekFrom;
-use std::io::{Read, Write};
+use std::io::{BufRead, BufReader, BufWriter, Read, Write};
 use std::marker::PhantomData;
 
 const PACKMAN_VERSION: u32 = 1;
@@ -162,7 +162,7 @@ where
 {
   superblock: Option<Superblock>,
   pub inodes: [Inode; 2],
-  file_ptr: MmapMut,
+  file_ptr: File,
   data_type: PhantomData<*const T>,
 }
 
@@ -174,7 +174,7 @@ where
     let latest_inode_offset = self.get_latest_inode().get_offset();
     let latest_inode_size = self.get_latest_inode().get_size();
     println!("{}, {}", latest_inode_offset, latest_inode_size);
-    let mut cursor = Cursor::new(self.file_ptr.as_mut());
+    let mut cursor = BufReader::new(&self.file_ptr);
     cursor.seek(SeekFrom::Start(latest_inode_offset))?;
     let mut d: Vec<u8> = Vec::new();
     d.resize(latest_inode_size as usize, 0);
@@ -185,8 +185,9 @@ where
   }
   pub fn from_path(path: &str) -> PackResult<PackFile<T>> {
     let file = OpenOptions::new().read(true).write(true).open(path)?;
-    let mmap = unsafe { MmapMut::map_mut(&file)? };
-    let mut cursor = Cursor::new(&mmap);
+    // let mmap = unsafe { MmapMut::map_mut(&file)? };
+    let mut cursor = BufReader::new(&file);
+    // let mut cursor = Cursor::new(&mmap);
     let sb = Superblock::deserialize_from(&mut cursor)?;
     cursor.seek(SeekFrom::Start(SUPERBLOCK_SIZE as u64))?;
     let inode_a = Inode::deserialize_from(&mut cursor)?;
@@ -195,7 +196,7 @@ where
     Ok(PackFile {
       superblock: Some(sb),
       inodes: [inode_a, inode_b],
-      file_ptr: mmap,
+      file_ptr: file,
       data_type: PhantomData,
     })
   }
@@ -278,15 +279,20 @@ where
     }
   }
   pub fn write_data(&mut self, data: &T) -> PackResult<()> {
-    let current_file_len = self.file_ptr.len();
+    let current_file_len = match self.file_ptr.metadata() {
+      Ok(file_meta) => file_meta.len(),
+      Err(_) => 0,
+    };
     let latest_position = self.get_latest_inode_position();
     let latest_inode = self.get_latest_inode();
     let latest_inode_offset = latest_inode.get_offset();
+    let latest_inode_size = latest_inode.get_size();
     let (offset, size) = self.allocate_data(&data)?;
     let checksum_data = util::calculate_checksum(&data);
     let mut new_inode =
       Inode::new(latest_inode.get_version() + 1, offset, size, checksum_data);
-    let mut cursor = Cursor::new(self.file_ptr.as_mut());
+    // let mut cursor = Cursor::new(self.file_ptr.as_mut());
+    let mut cursor = BufWriter::new(&self.file_ptr);
     match latest_position {
       InodePosition::First => {
         cursor.seek(SeekFrom::Start((SUPERBLOCK_SIZE + INODE_SIZE) as u64))?;
@@ -300,18 +306,22 @@ where
 
     // Resize the file if needed
     if new_inode.get_offset() > latest_inode_offset {
-      if current_file_len
-        <= (new_inode.get_offset() + new_inode.get_size()) as usize
-      {
+      if current_file_len <= new_inode.get_offset() + new_inode.get_size() {
         let mut v = Vec::new();
         v.resize(
           new_inode.get_offset() as usize + new_inode.get_size() as usize,
           0,
         );
-        println!("From {}, to {}", current_file_len, v.len());
-        cursor.seek(SeekFrom::Start(current_file_len as u64))?;
-        cursor.write_all(&v)?;
-        cursor.flush()?;
+        self
+          .file_ptr
+          .set_len(new_inode.get_offset() + new_inode.get_size())?;
+      }
+    } else {
+      // If the file is larger then needed, then reduce its size
+      if current_file_len > latest_inode_offset + latest_inode_size {
+        self
+          .file_ptr
+          .set_len(latest_inode_offset + latest_inode_size)?;
       }
     }
 
