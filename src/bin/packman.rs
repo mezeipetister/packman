@@ -1,5 +1,6 @@
 use chrono::prelude::*;
 use packman::fs::PackFile;
+use std::path::Path;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
   let args: Vec<String> = std::env::args().collect();
@@ -13,7 +14,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
       return Ok(());
     }
   };
-  let pack_file: PackFile = match PackFile::open(&path) {
+  let pack_file: PackFile = match PackFile::open(Path::new(&path)) {
     Ok(pf) => pf,
     Err(err) => {
       println!("{}", err);

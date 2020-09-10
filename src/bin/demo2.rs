@@ -1,7 +1,10 @@
 use packman::fs::PackFile;
+use packman::Pack;
 use serde::{Deserialize, Serialize};
+use std::path::Path;
+use std::path::PathBuf;
 
-#[derive(Serialize, Deserialize, Debug, Default)]
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
 struct Customer {
   name: String,
   age: u32,
@@ -35,7 +38,7 @@ fn main() {
 
   // Open or init demo packfile
   let mut a: PackFile = packman::fs::PackFile::open_or_init(
-    "data/demo_data_customer",
+    Path::new("data/demo_data_customer"),
     0,
     None,
     None,
@@ -49,7 +52,7 @@ fn main() {
 
   // Open or init demo packfile again
   let mut a: PackFile = packman::fs::PackFile::open_or_init(
-    "data/demo_data_customer",
+    Path::new("data/demo_data_customer"),
     0,
     None,
     None,
@@ -62,6 +65,11 @@ fn main() {
   println!("---------------");
   println!("Data is {:?}", a.load_data().unwrap());
   println!("Backup is {:?}", a.load_backup().unwrap());
+
+  let c: Pack<Customer> =
+    Pack::load_from_path(PathBuf::from("data/demo_data_customer")).unwrap();
+
+  println!("{:?}", c.unpack());
 
   // Try load a non packfile
   // let mut b: PackFile<Customer> =

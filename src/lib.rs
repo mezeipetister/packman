@@ -241,10 +241,13 @@ fn save_data_object<T>(path: &PathBuf, data: T) -> PackResult<()>
 where
   T: Serialize,
 {
-  let mut buffer = BufWriter::new(File::create(path)?);
-  // buffer.write_all(serde_yaml::to_string(&data)?.as_bytes())?;
-  buffer.write_all(&bincode::serialize(&data).expect("bincode ser error"))?;
-  buffer.flush()?;
+  // let mut buffer = BufWriter::new(File::create(path)?);
+  // // buffer.write_all(serde_yaml::to_string(&data)?.as_bytes())?;
+  // buffer.write_all(&bincode::serialize(&data).expect("bincode ser error"))?;
+  // buffer.flush()?;
+  // Ok(())
+  let mut pack_file = fs::PackFile::open(&path)?;
+  pack_file.write_data(&bincode::serialize(&data)?)?;
   Ok(())
 }
 
@@ -324,11 +327,12 @@ where
     // let mut buffer = String::new();
     // file.read_to_string(&mut buffer)?;
     // Self::from_str(&buffer, path)
-    let mut f = File::open(&path).expect("no file found");
-    let metadata = std::fs::metadata(&path).expect("unable to read metadata");
-    let mut buffer = vec![0; metadata.len() as usize];
-    f.read(&mut buffer).expect("buffer overflow");
-    match bincode::deserialize::<T>(&buffer) {
+    // let mut f = File::open(&path).expect("no file found");
+    // let metadata = std::fs::metadata(&path).expect("unable to read metadata");
+    // let mut buffer = vec![0; metadata.len() as usize];
+    // f.read(&mut buffer).expect("buffer overflow");
+    let mut pack_file = fs::PackFile::open(&path)?;
+    match bincode::deserialize::<T>(&pack_file.load_data()?) {
       Ok(t) => Ok(Pack { data: t, path }),
       Err(err) => Err(PackError::DeserializeError(err.to_string())),
     }

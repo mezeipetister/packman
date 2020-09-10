@@ -1,4 +1,5 @@
 use crate::*;
+use fmt::Display;
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;
 use std::fs::File;
@@ -8,6 +9,7 @@ use std::io::Cursor;
 use std::io::SeekFrom;
 use std::io::{BufReader, BufWriter, Read, Write};
 use std::marker::PhantomData;
+use AsRef;
 
 const PACKMAN_MAGIC: u64 = 0xc1a0babe4e; // cio babe forever
 const SUPERBLOCK_SIZE: u32 = 1024 * 4; // 4 kib reserved for superblock
@@ -265,7 +267,7 @@ impl PackFile {
   // Open file if it does exist
   // Otherwise it will create one
   pub fn open_or_init(
-    path: &str,
+    path: &Path,
     id: u64,
     alias: Option<String>,
     owner: Option<String>,
@@ -281,7 +283,7 @@ impl PackFile {
 
   // Open file if it exists
   // otherwise error
-  pub fn open(path: &str) -> PackResult<PackFile> {
+  pub fn open(path: &Path) -> PackResult<PackFile> {
     // Try open or error
     let file = OpenOptions::new().read(true).write(true).open(path)?;
 
@@ -327,7 +329,7 @@ impl PackFile {
       superblock: sb,
       inodes: [inode_a, inode_b],
       file_ptr: file,
-      path: PathBuf::from(&path),
+      path: PathBuf::from(path),
     };
 
     Ok(pfile)
@@ -361,8 +363,8 @@ impl PackFile {
   fn is_healthy(&mut self) -> bool {
     true
   }
-  pub fn init(
-    path: &str,
+  pub fn init<P: AsRef<Path>>(
+    path: P,
     id: u64,
     alias: Option<String>,
     owner: Option<String>,
