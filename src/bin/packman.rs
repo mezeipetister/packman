@@ -45,8 +45,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Utc.timestamp(details.date_created as i64, 0)
   );
   println!("Packman version: {}", details.packman_version);
+  println!("File version: {}", details.file_version);
   println!("File size in bytes: {}", details.file_size);
   println!("Inode A size: {}", details.inode_size_a);
+  println!("Inode A offset: {}", details.inode_offset_a);
+  println!("Inode A version: {}", details.inode_version_a);
   println!("Inode B size: {}", details.inode_size_b);
+  println!("Inode B offset: {}", details.inode_offset_b);
+  println!("Inode B version: {}", details.inode_version_b);
   Ok(())
 }
