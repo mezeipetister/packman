@@ -91,12 +91,12 @@ impl Superblock {
   }
   fn checksum(&mut self) {
     self.checksum = 0;
-    self.checksum = util::calculate_checksum(&self);
+    self.checksum = util::calculate_checksum(&self).unwrap_or(0);
   }
   fn verify_checksum(&mut self) -> bool {
     let checksum = self.checksum;
     self.checksum = 0;
-    let ok = checksum == util::calculate_checksum(&self);
+    let ok = checksum == util::calculate_checksum(&self).unwrap_or(0);
     self.checksum = checksum;
     ok
   }
@@ -177,12 +177,12 @@ where
   }
   fn checksum(&mut self) {
     self.checksum_inode = 0;
-    self.checksum_inode = util::calculate_checksum(&self);
+    self.checksum_inode = util::calculate_checksum(&self).unwrap_or(0);
   }
   fn verify_checksum(&mut self) -> bool {
     let checksum_inode = self.checksum_inode;
     self.checksum_inode = 0;
-    let ok = checksum_inode == util::calculate_checksum(&self);
+    let ok = checksum_inode == util::calculate_checksum(&self).unwrap_or(0);
     self.checksum_inode = checksum_inode;
     ok
   }
@@ -198,7 +198,7 @@ where
     reader.seek(SeekFrom::Start(self.get_offset()))?;
     reader.read(&mut buf)?;
     let data = bincode::deserialize(&buf)?;
-    let data_checksum = util::calculate_checksum(&data);
+    let data_checksum = util::calculate_checksum(&data)?;
     if self.get_data_checksum() != data_checksum {
       return Err(PackError::PckflDataError);
     }
@@ -364,7 +364,7 @@ where
       1,
       (SUPERBLOCK_SIZE + 2 * INODE_SIZE + 1) as u64,
       bincode::serialized_size(&data)?,
-      util::calculate_checksum(&data),
+      util::calculate_checksum(&data)?,
     );
     let mut inode_b = Inode::<T>::new(alias, 0, 0, 0, 0);
 
@@ -462,7 +462,7 @@ where
     let latest_inode_offset = self.get_latest_inode().get_offset();
     let latest_inode_size = self.get_latest_inode().get_size();
     let (offset, size) = self.allocate_data(&data)?;
-    let checksum_data = util::calculate_checksum(&data);
+    let checksum_data = util::calculate_checksum(&data)?;
     let mut new_inode = Inode::<T>::new(
       match latest_inode.get_alias() {
         Some(alias) => Some(alias.into()),
@@ -524,18 +524,25 @@ mod util {
   use serde::{Deserialize, Serialize};
   use std::fmt::Debug;
 
-  use crate::fs::Inode;
   use crate::fs::INODE_SIZE;
   use crate::fs::SUPERBLOCK_SIZE;
+  use crate::{fs::Inode, PackResult};
   use std::time;
 
   #[inline]
-  pub fn calculate_checksum<S>(s: &S) -> u32
+  pub fn calculate_checksum<S>(s: &S) -> PackResult<u32>
   where
     S: serde::Serialize,
   {
     let mut hasher = crc32fast::Hasher::new();
-    hasher.update(&bincode::serialize(&s).unwrap());
+    hasher.update(&bincode::serialize(&s)?);
+    Ok(hasher.finalize())
+  }
+
+  #[inline]
+  pub fn calculate_checksum_raw<S>(s: &[u8]) -> u32 {
+    let mut hasher = crc32fast::Hasher::new();
+    hasher.update(s);
     hasher.finalize()
   }
 
