@@ -76,6 +76,22 @@ pub enum PackError {
   /// ID Taken
   /// When VecPack ID not available
   IDTaken,
+  /// The requested file
+  /// is not a packfile
+  NotPackfile,
+  /// When the given file is a packfile
+  /// but the version is not ok
+  /// (required, found)
+  PckflVersionError(u32, u32),
+  /// When superblock checksum error
+  /// almost impossible
+  PckflCorruptedSuperblock,
+  /// When both inodes has checksum issues
+  /// almost impossible
+  PckflCorruptedInodes,
+  /// When packfile data is corrupted in both version
+  /// almost impossible
+  PckflDataError,
   BincodeError(String),
 }
 
@@ -113,6 +129,17 @@ impl fmt::Display for PackError {
       }
       PackError::IDTaken => write!(f, "VecPack ID already taken"),
       PackError::BincodeError(err) => write!(f, "Bincode error {}", err),
+      PackError::NotPackfile => write!(f, "Not packfile, magic error"),
+      PackError::PckflVersionError(expected, found) => write!(
+        f,
+        "Packfile version error. Reuired {}, found {}",
+        expected, found
+      ),
+      PackError::PckflCorruptedSuperblock => {
+        write!(f, "Packfile corrupted superblock")
+      }
+      PackError::PckflCorruptedInodes => write!(f, "Packfile corrupted inodes"),
+      PackError::PckflDataError => write!(f, "Packfile corrupted data"),
     }
   }
 }
@@ -136,6 +163,17 @@ impl fmt::Debug for PackError {
       }
       PackError::IDTaken => write!(f, "VecPack ID already taken"),
       PackError::BincodeError(err) => write!(f, "Bincode error {}", err),
+      PackError::NotPackfile => write!(f, "Not packfile, magic error"),
+      PackError::PckflVersionError(expected, found) => write!(
+        f,
+        "Packfile version error. Reuired {}, found {}",
+        expected, found
+      ),
+      PackError::PckflCorruptedSuperblock => {
+        write!(f, "Packfile corrupted superblock")
+      }
+      PackError::PckflCorruptedInodes => write!(f, "Packfile corrupted inodes"),
+      PackError::PckflDataError => write!(f, "Packfile corrupted data"),
     }
   }
 }
