@@ -103,7 +103,7 @@ impl Superblock {
 }
 
 #[derive(Serialize, Deserialize, Debug, Default)]
-pub struct Inode<T> {
+pub struct Inode {
   version: u64,          // Inode version, inrement one per data update
   offset: u64,           // Absolute offset of data bytes from the beginning
   size: u64,             // Data size in bytes
@@ -111,13 +111,9 @@ pub struct Inode<T> {
   date_created: u64,     // Data created in UNIX timestamp (seconds)
   checksum_inode: u32,   // U32 checksum of the inode
   checksum_data: u32,    // U32 checksum of the underlying data
-  data_type: PhantomData<*const T>,
 }
 
-impl<T> Inode<T>
-where
-  for<'de> T: Serialize + Deserialize<'de> + Debug,
-{
+impl Inode {
   pub fn new(
     alias: Option<String>,
     version: u64,
@@ -133,7 +129,6 @@ where
       date_created: util::now(),
       checksum_inode: 0,
       checksum_data,
-      data_type: PhantomData,
     }
   }
   pub fn get_version(&self) -> u64 {
@@ -189,37 +184,59 @@ where
   fn get_data_checksum(&self) -> u32 {
     self.checksum_data
   }
-  fn load_data<R>(&self, reader: &mut R) -> PackResult<T>
+  fn load_data<R>(&self, reader: &mut R) -> PackResult<Vec<u8>>
   where
     R: Read + Seek,
   {
+    if self.get_size() == 0 {
+      return Ok(vec![]);
+    }
     let mut buf: Vec<u8> = Vec::new();
     buf.resize(self.get_size() as usize, 0);
     reader.seek(SeekFrom::Start(self.get_offset()))?;
     reader.read(&mut buf)?;
-    let data = bincode::deserialize(&buf)?;
-    let data_checksum = util::calculate_checksum(&data)?;
+    let data_checksum = util::calculate_checksum_raw(&buf);
     if self.get_data_checksum() != data_checksum {
       return Err(PackError::PckflDataError);
     }
-    Ok(data)
+    Ok(buf)
   }
 }
 
-pub struct PackFile<T>
-where
-  for<'de> T: Serialize + Deserialize<'de> + Debug,
-{
-  superblock: Option<Superblock>,
-  pub inodes: [Inode<T>; 2],
-  file_ptr: File,
-  data_type: PhantomData<*const T>,
+#[derive(Debug)]
+pub struct Details {
+  pub path: String,
+  pub packman_version: u32,
+  pub date_created: u64,
+  pub inode_size_a: u64,
+  pub inode_size_b: u64,
+  pub file_size: u64,
+  pub owner: Option<String>,
+  pub id: u64,
+  pub workspace_id: Option<u64>,
 }
 
-impl<T> PackFile<T>
-where
-  for<'de> T: Serialize + Deserialize<'de> + Debug,
-{
+pub struct PackFile {
+  superblock: Superblock,
+  pub inodes: [Inode; 2],
+  file_ptr: File,
+  path: PathBuf,
+}
+
+impl PackFile {
+  pub fn get_details(&self) -> Details {
+    Details {
+      path: self.path.to_str().unwrap_or("ERROR").to_owned(),
+      packman_version: self.superblock.get_packman_version(),
+      date_created: self.superblock.get_date_created(),
+      inode_size_a: self.inodes[0].get_size(),
+      inode_size_b: self.inodes[1].get_size(),
+      file_size: self.path.metadata().unwrap().len(),
+      owner: self.superblock.get_owner().cloned(),
+      id: self.superblock.get_id(),
+      workspace_id: self.superblock.get_workspace_id(),
+    }
+  }
   // Be aware of the pointer position! Set it to 0
   pub fn is_pack_file<R>(file_ptr: &mut R) -> PackResult<bool>
   where
@@ -253,19 +270,18 @@ where
     alias: Option<String>,
     owner: Option<String>,
     workspace_id: Option<u64>,
-    data: &T,
-  ) -> PackResult<PackFile<T>> {
+  ) -> PackResult<PackFile> {
     // If path does not exist
     // Init it!
     if !std::fs::metadata(&path).is_ok() {
-      PackFile::<T>::init(&path, id, alias, owner, workspace_id, &data)?;
+      PackFile::init(&path, id, alias, owner, workspace_id)?;
     }
-    PackFile::<T>::open(path)
+    PackFile::open(path)
   }
 
   // Open file if it exists
   // otherwise error
-  pub fn open(path: &str) -> PackResult<PackFile<T>> {
+  pub fn open(path: &str) -> PackResult<PackFile> {
     // Try open or error
     let file = OpenOptions::new().read(true).write(true).open(path)?;
 
@@ -274,14 +290,14 @@ where
 
     // Try set cursor to 0
     reader.seek(SeekFrom::Start(0))?;
-    if !PackFile::<T>::is_pack_file(&mut reader)? {
+    if !PackFile::is_pack_file(&mut reader)? {
       return Err(PackError::NotPackfile);
     }
 
     // Lets check packfile version
     // No need to set seek position
     // as the version follows the magic
-    let version_check = PackFile::<T>::is_valid_version(&mut reader)?;
+    let version_check = PackFile::is_valid_version(&mut reader)?;
     if !version_check.0 {
       return Err(PackError::PckflVersionError(
         version_check.1,
@@ -308,10 +324,10 @@ where
 
     // Create PackFile
     let pfile = PackFile {
-      superblock: Some(sb),
+      superblock: sb,
       inodes: [inode_a, inode_b],
       file_ptr: file,
-      data_type: PhantomData,
+      path: PathBuf::from(&path),
     };
 
     Ok(pfile)
@@ -320,7 +336,7 @@ where
   // Load data from PackFile
   // Try latest
   // or try backup
-  pub fn load_data(&mut self) -> PackResult<T> {
+  pub fn load_data(&mut self) -> PackResult<Vec<u8>> {
     let mut reader = BufReader::new(&self.file_ptr);
     match self.get_latest_inode().load_data(&mut reader) {
       Ok(data) => Ok(data),
@@ -334,11 +350,11 @@ where
       },
     }
   }
-  pub fn load_backup(&mut self) -> PackResult<T> {
+  pub fn load_backup(&mut self) -> PackResult<Vec<u8>> {
     let mut reader = BufReader::new(&self.file_ptr);
     self.get_backup_inode().load_data(&mut reader)
   }
-  fn save_data(&mut self, data: T) -> PackResult<T> {
+  fn save_data(&mut self, data: &[u8]) -> PackResult<()> {
     todo!()
   }
   fn recover(&mut self) {}
@@ -351,7 +367,6 @@ where
     alias: Option<String>,
     owner: Option<String>,
     workspace_id: Option<u64>,
-    data: &T,
   ) -> PackResult<()> {
     let file = OpenOptions::new().write(true).create_new(true).open(path)?;
     file.set_len((SUPERBLOCK_SIZE + INODE_SIZE * 2) as u64)?;
@@ -359,35 +374,25 @@ where
     let mut sb = Superblock::new(id, owner, workspace_id);
     sb.serialize_into(&mut buf)?;
 
-    let mut inode_a = Inode::<T>::new(
-      alias.clone(),
-      1,
-      (SUPERBLOCK_SIZE + 2 * INODE_SIZE + 1) as u64,
-      bincode::serialized_size(&data)?,
-      util::calculate_checksum(&data)?,
-    );
-    let mut inode_b = Inode::<T>::new(alias, 0, 0, 0, 0);
+    let mut inode_a = Inode::new(alias.clone(), 0, 0, 0, 0);
+    let mut inode_b = Inode::new(alias, 0, 0, 0, 0);
 
     buf.seek(SeekFrom::Start(SUPERBLOCK_SIZE as u64))?;
     inode_a.serialize_into(&mut buf)?; // save the first inode
     buf.seek(SeekFrom::Start((SUPERBLOCK_SIZE + INODE_SIZE) as u64))?;
     inode_b.serialize_into(&mut buf)?; // save the second infode
 
-    // Set cursor to the data position
-    buf.seek(SeekFrom::Start(inode_a.get_offset()))?;
-    bincode::serialize_into(&mut buf, &data)?;
-
     buf.flush()?;
     Ok(())
   }
-  fn get_latest_inode(&self) -> &Inode<T> {
+  fn get_latest_inode(&self) -> &Inode {
     use InodePosition::*;
     match self.get_latest_inode_position() {
       First => &self.inodes[0],
       Second => &self.inodes[1],
     }
   }
-  fn get_backup_inode(&self) -> &Inode<T> {
+  fn get_backup_inode(&self) -> &Inode {
     use InodePosition::*;
     match self.get_latest_inode_position() {
       First => &self.inodes[1],
@@ -403,8 +408,8 @@ where
     }
   }
   // Returns (offset in bytes, size in bytes)
-  fn allocate_data(&self, data: &T) -> PackResult<(u64, u64)> {
-    let required_size = bincode::serialized_size(&data)?;
+  fn allocate_data(&self, data: &[u8]) -> PackResult<(u64, u64)> {
+    let required_size = data.len() as u64;
     if self.get_latest_inode().get_offset() == 0 {
       return Ok((
         (SUPERBLOCK_SIZE + 2 * INODE_SIZE) as u64 + 1,
@@ -430,7 +435,7 @@ where
   }
   fn update_first_inode<R>(
     &self,
-    inode: &mut Inode<T>,
+    inode: &mut Inode,
     reader: &mut R,
   ) -> PackResult<()>
   where
@@ -442,7 +447,7 @@ where
   }
   fn update_second_inode<R>(
     &self,
-    inode: &mut Inode<T>,
+    inode: &mut Inode,
     reader: &mut R,
   ) -> PackResult<()>
   where
@@ -452,7 +457,7 @@ where
     inode.serialize_into(reader)?;
     Ok(())
   }
-  pub fn write_data(&mut self, data: &T) -> PackResult<()> {
+  pub fn write_data(&mut self, data: &[u8]) -> PackResult<()> {
     let current_file_len = match self.file_ptr.metadata() {
       Ok(file_meta) => file_meta.len(),
       Err(_) => 0,
@@ -462,8 +467,9 @@ where
     let latest_inode_offset = self.get_latest_inode().get_offset();
     let latest_inode_size = self.get_latest_inode().get_size();
     let (offset, size) = self.allocate_data(&data)?;
-    let checksum_data = util::calculate_checksum(&data)?;
-    let mut new_inode = Inode::<T>::new(
+
+    let checksum_data = util::calculate_checksum_raw(&data);
+    let mut new_inode = Inode::new(
       match latest_inode.get_alias() {
         Some(alias) => Some(alias.into()),
         None => None,
@@ -509,7 +515,8 @@ where
     }
 
     cursor.seek(SeekFrom::Start(offset))?;
-    bincode::serialize_into(&mut cursor, &data)?;
+    cursor.write_all(data)?;
+    // bincode::serialize_into(&mut cursor, &data)?;
     cursor.flush()?;
     Ok(())
   }
@@ -540,7 +547,7 @@ mod util {
   }
 
   #[inline]
-  pub fn calculate_checksum_raw<S>(s: &[u8]) -> u32 {
+  pub fn calculate_checksum_raw(s: &[u8]) -> u32 {
     let mut hasher = crc32fast::Hasher::new();
     hasher.update(s);
     hasher.finalize()
@@ -570,7 +577,7 @@ mod util {
   }
 
   #[inline]
-  pub(crate) fn file_size<T>(inode_a: &Inode<T>, inode_b: &Inode<T>) -> u64
+  pub(crate) fn file_size<T>(inode_a: &Inode, inode_b: &Inode) -> u64
   where
     for<'de> T: Serialize + Deserialize<'de> + Debug,
   {

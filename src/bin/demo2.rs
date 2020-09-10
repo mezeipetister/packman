@@ -34,27 +34,26 @@ fn main() {
   let customer = Customer::new(name, age);
 
   // Open or init demo packfile
-  let mut a: PackFile<Customer> = packman::fs::PackFile::open_or_init(
+  let mut a: PackFile = packman::fs::PackFile::open_or_init(
     "data/demo_data_customer",
     0,
     None,
     None,
     None,
-    &Customer::default(),
   )
   .unwrap();
 
   // Write new data to PackFile
-  a.write_data(&customer).unwrap();
+  a.write_data(&bincode::serialize(&customer).unwrap())
+    .unwrap();
 
   // Open or init demo packfile again
-  let mut a: PackFile<Customer> = packman::fs::PackFile::open_or_init(
+  let mut a: PackFile = packman::fs::PackFile::open_or_init(
     "data/demo_data_customer",
     0,
     None,
     None,
     None,
-    &Customer::default(),
   )
   .unwrap();
 
