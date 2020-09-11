@@ -1,0 +1,860 @@
+desc: (none)
+cmd: ./target/release/demo3
+time_unit: i
+#-----------
+snapshot=0
+#-----------
+time=0
+mem_heap_B=0
+mem_heap_extra_B=0
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=1
+#-----------
+time=447475
+mem_heap_B=369008819
+mem_heap_extra_B=157
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=2
+#-----------
+time=530885912
+mem_heap_B=369008819
+mem_heap_extra_B=157
+mem_stacks_B=0
+heap_tree=detailed
+n2: 369008819 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 369000356 0x1171E1: alloc::raw_vec::RawVec<T,A>::reserve (in /home/peter/Documents/projects/packman/target/release/demo3)
+  n1: 369000356 0x1128E3: packman::fs::Inode::load_data (in /home/peter/Documents/projects/packman/target/release/demo3)
+   n1: 369000356 0x114A56: packman::fs::PackFile::load_data (in /home/peter/Documents/projects/packman/target/release/demo3)
+    n1: 369000356 0x110CAA: packman::Pack<T>::load_from_path (in /home/peter/Documents/projects/packman/target/release/demo3)
+     n1: 369000356 0x111497: packman::Pack<T>::try_load_or_init (in /home/peter/Documents/projects/packman/target/release/demo3)
+      n1: 369000356 0x10E47F: demo3::main (in /home/peter/Documents/projects/packman/target/release/demo3)
+       n1: 369000356 0x10ED32: std::rt::lang_start::{{closure}} (in /home/peter/Documents/projects/packman/target/release/demo3)
+        n1: 369000356 0x124F42: {{closure}} (rt.rs:52)
+         n1: 369000356 0x124F42: do_call<closure-0,i32> (panicking.rs:348)
+          n1: 369000356 0x124F42: try<i32,closure-0> (panicking.rs:325)
+           n1: 369000356 0x124F42: catch_unwind<closure-0,i32> (panic.rs:394)
+            n1: 369000356 0x124F42: std::rt::lang_start_internal (rt.rs:51)
+             n0: 369000356 0x10EB11: main (in /home/peter/Documents/projects/packman/target/release/demo3)
+ n0: 8463 in 22 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=3
+#-----------
+time=635456582
+mem_heap_B=391234535
+mem_heap_extra_B=6151353
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=4
+#-----------
+time=699916646
+mem_heap_B=394598039
+mem_heap_extra_B=9940649
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=5
+#-----------
+time=799740378
+mem_heap_B=416584031
+mem_heap_extra_B=15808825
+mem_stacks_B=0
+heap_tree=detailed
+n4: 416584031 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 369000356 0x1171E1: alloc::raw_vec::RawVec<T,A>::reserve (in /home/peter/Documents/projects/packman/target/release/demo3)
+  n1: 369000356 0x1128E3: packman::fs::Inode::load_data (in /home/peter/Documents/projects/packman/target/release/demo3)
+   n1: 369000356 0x114A56: packman::fs::PackFile::load_data (in /home/peter/Documents/projects/packman/target/release/demo3)
+    n1: 369000356 0x110CAA: packman::Pack<T>::load_from_path (in /home/peter/Documents/projects/packman/target/release/demo3)
+     n1: 369000356 0x111497: packman::Pack<T>::try_load_or_init (in /home/peter/Documents/projects/packman/target/release/demo3)
+      n1: 369000356 0x10E47F: demo3::main (in /home/peter/Documents/projects/packman/target/release/demo3)
+       n1: 369000356 0x10ED32: std::rt::lang_start::{{closure}} (in /home/peter/Documents/projects/packman/target/release/demo3)
+        n1: 369000356 0x124F42: {{closure}} (rt.rs:52)
+         n1: 369000356 0x124F42: do_call<closure-0,i32> (panicking.rs:348)
+          n1: 369000356 0x124F42: try<i32,closure-0> (panicking.rs:325)
+           n1: 369000356 0x124F42: catch_unwind<closure-0,i32> (panic.rs:394)
+            n1: 369000356 0x124F42: std::rt::lang_start_internal (rt.rs:51)
+             n0: 369000356 0x10EB11: main (in /home/peter/Documents/projects/packman/target/release/demo3)
+ n1: 33554432 0x10EC4E: alloc::raw_vec::RawVec<T,A>::reserve (in /home/peter/Documents/projects/packman/target/release/demo3)
+  n1: 33554432 0x10F060: <serde::de::impls::<impl serde::de::Deserialize for alloc::vec::Vec<T>>::deserialize::VecVisitor<T> as serde::de::Visitor>::visit_seq (in /home/peter/Documents/projects/packman/target/release/demo3)
+   n1: 33554432 0x110205: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+    n1: 33554432 0x111BB8: bincode::internal::deserialize (in /home/peter/Documents/projects/packman/target/release/demo3)
+     n1: 33554432 0x110D2F: packman::Pack<T>::load_from_path (in /home/peter/Documents/projects/packman/target/release/demo3)
+      n1: 33554432 0x111497: packman::Pack<T>::try_load_or_init (in /home/peter/Documents/projects/packman/target/release/demo3)
+       n1: 33554432 0x10E47F: demo3::main (in /home/peter/Documents/projects/packman/target/release/demo3)
+        n1: 33554432 0x10ED32: std::rt::lang_start::{{closure}} (in /home/peter/Documents/projects/packman/target/release/demo3)
+         n1: 33554432 0x124F42: {{closure}} (rt.rs:52)
+          n1: 33554432 0x124F42: do_call<closure-0,i32> (panicking.rs:348)
+           n1: 33554432 0x124F42: try<i32,closure-0> (panicking.rs:325)
+            n1: 33554432 0x124F42: catch_unwind<closure-0,i32> (panic.rs:394)
+             n1: 33554432 0x124F42: std::rt::lang_start_internal (rt.rs:51)
+              n0: 33554432 0x10EB11: main (in /home/peter/Documents/projects/packman/target/release/demo3)
+ n2: 14028972 0x10F8DC: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_string (in /home/peter/Documents/projects/packman/target/release/demo3)
+  n0: 9589522 in 7 places, all below massif's threshold (1.00%)
+  n1: 4439450 0x110668: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+   n1: 4439450 0x10FD2E: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+    n1: 4439450 0x10EEAD: <serde::de::impls::<impl serde::de::Deserialize for alloc::vec::Vec<T>>::deserialize::VecVisitor<T> as serde::de::Visitor>::visit_seq (in /home/peter/Documents/projects/packman/target/release/demo3)
+     n1: 4439450 0x110205: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+      n1: 4439450 0x111BB8: bincode::internal::deserialize (in /home/peter/Documents/projects/packman/target/release/demo3)
+       n1: 4439450 0x110D2F: packman::Pack<T>::load_from_path (in /home/peter/Documents/projects/packman/target/release/demo3)
+        n1: 4439450 0x111497: packman::Pack<T>::try_load_or_init (in /home/peter/Documents/projects/packman/target/release/demo3)
+         n1: 4439450 0x10E47F: demo3::main (in /home/peter/Documents/projects/packman/target/release/demo3)
+          n1: 4439450 0x10ED32: std::rt::lang_start::{{closure}} (in /home/peter/Documents/projects/packman/target/release/demo3)
+           n1: 4439450 0x124F42: {{closure}} (rt.rs:52)
+            n1: 4439450 0x124F42: do_call<closure-0,i32> (panicking.rs:348)
+             n1: 4439450 0x124F42: try<i32,closure-0> (panicking.rs:325)
+              n1: 4439450 0x124F42: catch_unwind<closure-0,i32> (panic.rs:394)
+               n1: 4439450 0x124F42: std::rt::lang_start_internal (rt.rs:51)
+                n0: 4439450 0x10EB11: main (in /home/peter/Documents/projects/packman/target/release/demo3)
+ n0: 271 in 23 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=6
+#-----------
+time=866886278
+mem_heap_B=420087681
+mem_heap_extra_B=19756023
+mem_stacks_B=0
+heap_tree=detailed
+n4: 420087681 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 369000356 0x1171E1: alloc::raw_vec::RawVec<T,A>::reserve (in /home/peter/Documents/projects/packman/target/release/demo3)
+  n1: 369000356 0x1128E3: packman::fs::Inode::load_data (in /home/peter/Documents/projects/packman/target/release/demo3)
+   n1: 369000356 0x114A56: packman::fs::PackFile::load_data (in /home/peter/Documents/projects/packman/target/release/demo3)
+    n1: 369000356 0x110CAA: packman::Pack<T>::load_from_path (in /home/peter/Documents/projects/packman/target/release/demo3)
+     n1: 369000356 0x111497: packman::Pack<T>::try_load_or_init (in /home/peter/Documents/projects/packman/target/release/demo3)
+      n1: 369000356 0x10E47F: demo3::main (in /home/peter/Documents/projects/packman/target/release/demo3)
+       n1: 369000356 0x10ED32: std::rt::lang_start::{{closure}} (in /home/peter/Documents/projects/packman/target/release/demo3)
+        n1: 369000356 0x124F42: {{closure}} (rt.rs:52)
+         n1: 369000356 0x124F42: do_call<closure-0,i32> (panicking.rs:348)
+          n1: 369000356 0x124F42: try<i32,closure-0> (panicking.rs:325)
+           n1: 369000356 0x124F42: catch_unwind<closure-0,i32> (panic.rs:394)
+            n1: 369000356 0x124F42: std::rt::lang_start_internal (rt.rs:51)
+             n0: 369000356 0x10EB11: main (in /home/peter/Documents/projects/packman/target/release/demo3)
+ n1: 33554432 0x10EC4E: alloc::raw_vec::RawVec<T,A>::reserve (in /home/peter/Documents/projects/packman/target/release/demo3)
+  n1: 33554432 0x10F060: <serde::de::impls::<impl serde::de::Deserialize for alloc::vec::Vec<T>>::deserialize::VecVisitor<T> as serde::de::Visitor>::visit_seq (in /home/peter/Documents/projects/packman/target/release/demo3)
+   n1: 33554432 0x110205: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+    n1: 33554432 0x111BB8: bincode::internal::deserialize (in /home/peter/Documents/projects/packman/target/release/demo3)
+     n1: 33554432 0x110D2F: packman::Pack<T>::load_from_path (in /home/peter/Documents/projects/packman/target/release/demo3)
+      n1: 33554432 0x111497: packman::Pack<T>::try_load_or_init (in /home/peter/Documents/projects/packman/target/release/demo3)
+       n1: 33554432 0x10E47F: demo3::main (in /home/peter/Documents/projects/packman/target/release/demo3)
+        n1: 33554432 0x10ED32: std::rt::lang_start::{{closure}} (in /home/peter/Documents/projects/packman/target/release/demo3)
+         n1: 33554432 0x124F42: {{closure}} (rt.rs:52)
+          n1: 33554432 0x124F42: do_call<closure-0,i32> (panicking.rs:348)
+           n1: 33554432 0x124F42: try<i32,closure-0> (panicking.rs:325)
+            n1: 33554432 0x124F42: catch_unwind<closure-0,i32> (panic.rs:394)
+             n1: 33554432 0x124F42: std::rt::lang_start_internal (rt.rs:51)
+              n0: 33554432 0x10EB11: main (in /home/peter/Documents/projects/packman/target/release/demo3)
+ n4: 17532622 0x10F8DC: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_string (in /home/peter/Documents/projects/packman/target/release/demo3)
+  n1: 5548200 0x110668: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+   n1: 5548200 0x10FD2E: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+    n1: 5548200 0x10EEAD: <serde::de::impls::<impl serde::de::Deserialize for alloc::vec::Vec<T>>::deserialize::VecVisitor<T> as serde::de::Visitor>::visit_seq (in /home/peter/Documents/projects/packman/target/release/demo3)
+     n1: 5548200 0x110205: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+      n1: 5548200 0x111BB8: bincode::internal::deserialize (in /home/peter/Documents/projects/packman/target/release/demo3)
+       n1: 5548200 0x110D2F: packman::Pack<T>::load_from_path (in /home/peter/Documents/projects/packman/target/release/demo3)
+        n1: 5548200 0x111497: packman::Pack<T>::try_load_or_init (in /home/peter/Documents/projects/packman/target/release/demo3)
+         n1: 5548200 0x10E47F: demo3::main (in /home/peter/Documents/projects/packman/target/release/demo3)
+          n1: 5548200 0x10ED32: std::rt::lang_start::{{closure}} (in /home/peter/Documents/projects/packman/target/release/demo3)
+           n1: 5548200 0x124F42: {{closure}} (rt.rs:52)
+            n1: 5548200 0x124F42: do_call<closure-0,i32> (panicking.rs:348)
+             n1: 5548200 0x124F42: try<i32,closure-0> (panicking.rs:325)
+              n1: 5548200 0x124F42: catch_unwind<closure-0,i32> (panic.rs:394)
+               n1: 5548200 0x124F42: std::rt::lang_start_internal (rt.rs:51)
+                n0: 5548200 0x10EB11: main (in /home/peter/Documents/projects/packman/target/release/demo3)
+  n1: 4438560 0x10FBF1: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+   n1: 4438560 0x10EEAD: <serde::de::impls::<impl serde::de::Deserialize for alloc::vec::Vec<T>>::deserialize::VecVisitor<T> as serde::de::Visitor>::visit_seq (in /home/peter/Documents/projects/packman/target/release/demo3)
+    n1: 4438560 0x110205: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+     n1: 4438560 0x111BB8: bincode::internal::deserialize (in /home/peter/Documents/projects/packman/target/release/demo3)
+      n1: 4438560 0x110D2F: packman::Pack<T>::load_from_path (in /home/peter/Documents/projects/packman/target/release/demo3)
+       n1: 4438560 0x111497: packman::Pack<T>::try_load_or_init (in /home/peter/Documents/projects/packman/target/release/demo3)
+        n1: 4438560 0x10E47F: demo3::main (in /home/peter/Documents/projects/packman/target/release/demo3)
+         n1: 4438560 0x10ED32: std::rt::lang_start::{{closure}} (in /home/peter/Documents/projects/packman/target/release/demo3)
+          n1: 4438560 0x124F42: {{closure}} (rt.rs:52)
+           n1: 4438560 0x124F42: do_call<closure-0,i32> (panicking.rs:348)
+            n1: 4438560 0x124F42: try<i32,closure-0> (panicking.rs:325)
+             n1: 4438560 0x124F42: catch_unwind<closure-0,i32> (panic.rs:394)
+              n1: 4438560 0x124F42: std::rt::lang_start_internal (rt.rs:51)
+               n0: 4438560 0x10EB11: main (in /home/peter/Documents/projects/packman/target/release/demo3)
+  n1: 4438560 0x110708: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+   n1: 4438560 0x10FD2E: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+    n1: 4438560 0x10EEAD: <serde::de::impls::<impl serde::de::Deserialize for alloc::vec::Vec<T>>::deserialize::VecVisitor<T> as serde::de::Visitor>::visit_seq (in /home/peter/Documents/projects/packman/target/release/demo3)
+     n1: 4438560 0x110205: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+      n1: 4438560 0x111BB8: bincode::internal::deserialize (in /home/peter/Documents/projects/packman/target/release/demo3)
+       n1: 4438560 0x110D2F: packman::Pack<T>::load_from_path (in /home/peter/Documents/projects/packman/target/release/demo3)
+        n1: 4438560 0x111497: packman::Pack<T>::try_load_or_init (in /home/peter/Documents/projects/packman/target/release/demo3)
+         n1: 4438560 0x10E47F: demo3::main (in /home/peter/Documents/projects/packman/target/release/demo3)
+          n1: 4438560 0x10ED32: std::rt::lang_start::{{closure}} (in /home/peter/Documents/projects/packman/target/release/demo3)
+           n1: 4438560 0x124F42: {{closure}} (rt.rs:52)
+            n1: 4438560 0x124F42: do_call<closure-0,i32> (panicking.rs:348)
+             n1: 4438560 0x124F42: try<i32,closure-0> (panicking.rs:325)
+              n1: 4438560 0x124F42: catch_unwind<closure-0,i32> (panic.rs:394)
+               n1: 4438560 0x124F42: std::rt::lang_start_internal (rt.rs:51)
+                n0: 4438560 0x10EB11: main (in /home/peter/Documents/projects/packman/target/release/demo3)
+  n0: 3107302 in 5 places, all below massif's threshold (1.00%)
+ n0: 271 in 23 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=7
+#-----------
+time=968500466
+mem_heap_B=458944287
+mem_heap_extra_B=25729409
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=8
+#-----------
+time=1102792266
+mem_heap_B=465951587
+mem_heap_extra_B=33623789
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=9
+#-----------
+time=1237084066
+mem_heap_B=472958887
+mem_heap_extra_B=41518169
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=10
+#-----------
+time=1326612082
+mem_heap_B=544739282
+mem_heap_extra_B=46781110
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=11
+#-----------
+time=1460903882
+mem_heap_B=551746582
+mem_heap_extra_B=54675474
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=12
+#-----------
+time=1595195682
+mem_heap_B=558753882
+mem_heap_extra_B=62569854
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=13
+#-----------
+time=1729487482
+mem_heap_B=565761182
+mem_heap_extra_B=70464234
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=14
+#-----------
+time=1863779282
+mem_heap_B=572768482
+mem_heap_extra_B=78358614
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=15
+#-----------
+time=1998071082
+mem_heap_B=579775782
+mem_heap_extra_B=86252994
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=16
+#-----------
+time=2087598960
+mem_heap_B=584447334
+mem_heap_extra_B=91515914
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=17
+#-----------
+time=2132362992
+mem_heap_B=721000810
+mem_heap_extra_B=94147358
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=18
+#-----------
+time=2221890870
+mem_heap_B=725672362
+mem_heap_extra_B=99410294
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=19
+#-----------
+time=2356182670
+mem_heap_B=732679662
+mem_heap_extra_B=107304658
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=20
+#-----------
+time=2490474470
+mem_heap_B=739686962
+mem_heap_extra_B=115199038
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=21
+#-----------
+time=2624766270
+mem_heap_B=746694262
+mem_heap_extra_B=123093418
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=22
+#-----------
+time=2759058070
+mem_heap_B=753701562
+mem_heap_extra_B=130987814
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=23
+#-----------
+time=2893349870
+mem_heap_B=760708862
+mem_heap_extra_B=138882178
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=24
+#-----------
+time=2982877686
+mem_heap_B=765380379
+mem_heap_extra_B=144145093
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=25
+#-----------
+time=3117169486
+mem_heap_B=772387679
+mem_heap_extra_B=152039457
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=26
+#-----------
+time=3251461286
+mem_heap_B=779394979
+mem_heap_extra_B=159933837
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=27
+#-----------
+time=3318607186
+mem_heap_B=782898629
+mem_heap_extra_B=163881035
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=28
+#-----------
+time=3385753086
+mem_heap_B=786402279
+mem_heap_extra_B=167828217
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=29
+#-----------
+time=3452898986
+mem_heap_B=789905929
+mem_heap_extra_B=171775399
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=30
+#-----------
+time=3520044886
+mem_heap_B=793409579
+mem_heap_extra_B=175722597
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=31
+#-----------
+time=3609572792
+mem_heap_B=798081110
+mem_heap_extra_B=180985522
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=32
+#-----------
+time=3699100670
+mem_heap_B=802752662
+mem_heap_extra_B=186248442
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=33
+#-----------
+time=3788628596
+mem_heap_B=1075859635
+mem_heap_extra_B=191511341
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=34
+#-----------
+time=3878156502
+mem_heap_B=1080531166
+mem_heap_extra_B=196774282
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=35
+#-----------
+time=3990066296
+mem_heap_B=1086370585
+mem_heap_extra_B=203352919
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=36
+#-----------
+time=4101976180
+mem_heap_B=1092210018
+mem_heap_extra_B=209931582
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=37
+#-----------
+time=4213886002
+mem_heap_B=1098049416
+mem_heap_extra_B=216510224
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=38
+#-----------
+time=4325795796
+mem_heap_B=1103888835
+mem_heap_extra_B=223088861
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=39
+#-----------
+time=4437705680
+mem_heap_B=1109728268
+mem_heap_extra_B=229667524
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=40
+#-----------
+time=4549615502
+mem_heap_B=1115567666
+mem_heap_extra_B=236246166
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=41
+#-----------
+time=4661525296
+mem_heap_B=1121407085
+mem_heap_extra_B=242824803
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=42
+#-----------
+time=4773435180
+mem_heap_B=1127246518
+mem_heap_extra_B=249403466
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=43
+#-----------
+time=4885345002
+mem_heap_B=1133085916
+mem_heap_extra_B=255982108
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=44
+#-----------
+time=4997254796
+mem_heap_B=1138925335
+mem_heap_extra_B=262560745
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=45
+#-----------
+time=5072888615
+mem_heap_B=1142871851
+mem_heap_extra_B=267006885
+mem_stacks_B=0
+heap_tree=peak
+n4: 1142871851 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 536870912 0x10EC4E: alloc::raw_vec::RawVec<T,A>::reserve (in /home/peter/Documents/projects/packman/target/release/demo3)
+  n1: 536870912 0x10F060: <serde::de::impls::<impl serde::de::Deserialize for alloc::vec::Vec<T>>::deserialize::VecVisitor<T> as serde::de::Visitor>::visit_seq (in /home/peter/Documents/projects/packman/target/release/demo3)
+   n1: 536870912 0x110205: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+    n1: 536870912 0x111BB8: bincode::internal::deserialize (in /home/peter/Documents/projects/packman/target/release/demo3)
+     n1: 536870912 0x110D2F: packman::Pack<T>::load_from_path (in /home/peter/Documents/projects/packman/target/release/demo3)
+      n1: 536870912 0x111497: packman::Pack<T>::try_load_or_init (in /home/peter/Documents/projects/packman/target/release/demo3)
+       n1: 536870912 0x10E47F: demo3::main (in /home/peter/Documents/projects/packman/target/release/demo3)
+        n1: 536870912 0x10ED32: std::rt::lang_start::{{closure}} (in /home/peter/Documents/projects/packman/target/release/demo3)
+         n1: 536870912 0x124F42: {{closure}} (rt.rs:52)
+          n1: 536870912 0x124F42: do_call<closure-0,i32> (panicking.rs:348)
+           n1: 536870912 0x124F42: try<i32,closure-0> (panicking.rs:325)
+            n1: 536870912 0x124F42: catch_unwind<closure-0,i32> (panic.rs:394)
+             n1: 536870912 0x124F42: std::rt::lang_start_internal (rt.rs:51)
+              n0: 536870912 0x10EB11: main (in /home/peter/Documents/projects/packman/target/release/demo3)
+ n1: 369000356 0x1171E1: alloc::raw_vec::RawVec<T,A>::reserve (in /home/peter/Documents/projects/packman/target/release/demo3)
+  n1: 369000356 0x1128E3: packman::fs::Inode::load_data (in /home/peter/Documents/projects/packman/target/release/demo3)
+   n1: 369000356 0x114A56: packman::fs::PackFile::load_data (in /home/peter/Documents/projects/packman/target/release/demo3)
+    n1: 369000356 0x110CAA: packman::Pack<T>::load_from_path (in /home/peter/Documents/projects/packman/target/release/demo3)
+     n1: 369000356 0x111497: packman::Pack<T>::try_load_or_init (in /home/peter/Documents/projects/packman/target/release/demo3)
+      n1: 369000356 0x10E47F: demo3::main (in /home/peter/Documents/projects/packman/target/release/demo3)
+       n1: 369000356 0x10ED32: std::rt::lang_start::{{closure}} (in /home/peter/Documents/projects/packman/target/release/demo3)
+        n1: 369000356 0x124F42: {{closure}} (rt.rs:52)
+         n1: 369000356 0x124F42: do_call<closure-0,i32> (panicking.rs:348)
+          n1: 369000356 0x124F42: try<i32,closure-0> (panicking.rs:325)
+           n1: 369000356 0x124F42: catch_unwind<closure-0,i32> (panic.rs:394)
+            n1: 369000356 0x124F42: std::rt::lang_start_internal (rt.rs:51)
+             n0: 369000356 0x10EB11: main (in /home/peter/Documents/projects/packman/target/release/demo3)
+ n5: 237000312 0x10F8DC: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_string (in /home/peter/Documents/projects/packman/target/release/demo3)
+  n1: 75000000 0x110668: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+   n1: 75000000 0x10FD2E: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+    n1: 75000000 0x10EEAD: <serde::de::impls::<impl serde::de::Deserialize for alloc::vec::Vec<T>>::deserialize::VecVisitor<T> as serde::de::Visitor>::visit_seq (in /home/peter/Documents/projects/packman/target/release/demo3)
+     n1: 75000000 0x110205: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+      n1: 75000000 0x111BB8: bincode::internal::deserialize (in /home/peter/Documents/projects/packman/target/release/demo3)
+       n1: 75000000 0x110D2F: packman::Pack<T>::load_from_path (in /home/peter/Documents/projects/packman/target/release/demo3)
+        n1: 75000000 0x111497: packman::Pack<T>::try_load_or_init (in /home/peter/Documents/projects/packman/target/release/demo3)
+         n1: 75000000 0x10E47F: demo3::main (in /home/peter/Documents/projects/packman/target/release/demo3)
+          n1: 75000000 0x10ED32: std::rt::lang_start::{{closure}} (in /home/peter/Documents/projects/packman/target/release/demo3)
+           n1: 75000000 0x124F42: {{closure}} (rt.rs:52)
+            n1: 75000000 0x124F42: do_call<closure-0,i32> (panicking.rs:348)
+             n1: 75000000 0x124F42: try<i32,closure-0> (panicking.rs:325)
+              n1: 75000000 0x124F42: catch_unwind<closure-0,i32> (panic.rs:394)
+               n1: 75000000 0x124F42: std::rt::lang_start_internal (rt.rs:51)
+                n0: 75000000 0x10EB11: main (in /home/peter/Documents/projects/packman/target/release/demo3)
+  n1: 60000000 0x10FBF1: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+   n1: 60000000 0x10EEAD: <serde::de::impls::<impl serde::de::Deserialize for alloc::vec::Vec<T>>::deserialize::VecVisitor<T> as serde::de::Visitor>::visit_seq (in /home/peter/Documents/projects/packman/target/release/demo3)
+    n1: 60000000 0x110205: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+     n1: 60000000 0x111BB8: bincode::internal::deserialize (in /home/peter/Documents/projects/packman/target/release/demo3)
+      n1: 60000000 0x110D2F: packman::Pack<T>::load_from_path (in /home/peter/Documents/projects/packman/target/release/demo3)
+       n1: 60000000 0x111497: packman::Pack<T>::try_load_or_init (in /home/peter/Documents/projects/packman/target/release/demo3)
+        n1: 60000000 0x10E47F: demo3::main (in /home/peter/Documents/projects/packman/target/release/demo3)
+         n1: 60000000 0x10ED32: std::rt::lang_start::{{closure}} (in /home/peter/Documents/projects/packman/target/release/demo3)
+          n1: 60000000 0x124F42: {{closure}} (rt.rs:52)
+           n1: 60000000 0x124F42: do_call<closure-0,i32> (panicking.rs:348)
+            n1: 60000000 0x124F42: try<i32,closure-0> (panicking.rs:325)
+             n1: 60000000 0x124F42: catch_unwind<closure-0,i32> (panic.rs:394)
+              n1: 60000000 0x124F42: std::rt::lang_start_internal (rt.rs:51)
+               n0: 60000000 0x10EB11: main (in /home/peter/Documents/projects/packman/target/release/demo3)
+  n1: 60000000 0x110708: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+   n1: 60000000 0x10FD2E: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+    n1: 60000000 0x10EEAD: <serde::de::impls::<impl serde::de::Deserialize for alloc::vec::Vec<T>>::deserialize::VecVisitor<T> as serde::de::Visitor>::visit_seq (in /home/peter/Documents/projects/packman/target/release/demo3)
+     n1: 60000000 0x110205: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+      n1: 60000000 0x111BB8: bincode::internal::deserialize (in /home/peter/Documents/projects/packman/target/release/demo3)
+       n1: 60000000 0x110D2F: packman::Pack<T>::load_from_path (in /home/peter/Documents/projects/packman/target/release/demo3)
+        n1: 60000000 0x111497: packman::Pack<T>::try_load_or_init (in /home/peter/Documents/projects/packman/target/release/demo3)
+         n1: 60000000 0x10E47F: demo3::main (in /home/peter/Documents/projects/packman/target/release/demo3)
+          n1: 60000000 0x10ED32: std::rt::lang_start::{{closure}} (in /home/peter/Documents/projects/packman/target/release/demo3)
+           n1: 60000000 0x124F42: {{closure}} (rt.rs:52)
+            n1: 60000000 0x124F42: do_call<closure-0,i32> (panicking.rs:348)
+             n1: 60000000 0x124F42: try<i32,closure-0> (panicking.rs:325)
+              n1: 60000000 0x124F42: catch_unwind<closure-0,i32> (panic.rs:394)
+               n1: 60000000 0x124F42: std::rt::lang_start_internal (rt.rs:51)
+                n0: 60000000 0x10EB11: main (in /home/peter/Documents/projects/packman/target/release/demo3)
+  n1: 30000000 0x10FB16: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+   n1: 30000000 0x10EEAD: <serde::de::impls::<impl serde::de::Deserialize for alloc::vec::Vec<T>>::deserialize::VecVisitor<T> as serde::de::Visitor>::visit_seq (in /home/peter/Documents/projects/packman/target/release/demo3)
+    n1: 30000000 0x110205: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+     n1: 30000000 0x111BB8: bincode::internal::deserialize (in /home/peter/Documents/projects/packman/target/release/demo3)
+      n1: 30000000 0x110D2F: packman::Pack<T>::load_from_path (in /home/peter/Documents/projects/packman/target/release/demo3)
+       n1: 30000000 0x111497: packman::Pack<T>::try_load_or_init (in /home/peter/Documents/projects/packman/target/release/demo3)
+        n1: 30000000 0x10E47F: demo3::main (in /home/peter/Documents/projects/packman/target/release/demo3)
+         n1: 30000000 0x10ED32: std::rt::lang_start::{{closure}} (in /home/peter/Documents/projects/packman/target/release/demo3)
+          n1: 30000000 0x124F42: {{closure}} (rt.rs:52)
+           n1: 30000000 0x124F42: do_call<closure-0,i32> (panicking.rs:348)
+            n1: 30000000 0x124F42: try<i32,closure-0> (panicking.rs:325)
+             n1: 30000000 0x124F42: catch_unwind<closure-0,i32> (panic.rs:394)
+              n1: 30000000 0x124F42: std::rt::lang_start_internal (rt.rs:51)
+               n0: 30000000 0x10EB11: main (in /home/peter/Documents/projects/packman/target/release/demo3)
+  n0: 12000312 in 5 places, all below massif's threshold (1.00%)
+ n0: 271 in 23 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=46
+#-----------
+time=5198630529
+mem_heap_B=718687735
+mem_heap_extra_B=204836185
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=47
+#-----------
+time=5332874529
+mem_heap_B=659769535
+mem_heap_extra_B=138459313
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=48
+#-----------
+time=5467118529
+mem_heap_B=600851335
+mem_heap_extra_B=72082457
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=49
+#-----------
+time=5601362529
+mem_heap_B=541933135
+mem_heap_extra_B=5705601
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=50
+#-----------
+time=5601810009
+mem_heap_B=541736741
+mem_heap_extra_B=5484347
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=51
+#-----------
+time=5602257489
+mem_heap_B=541540347
+mem_heap_extra_B=5263093
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=52
+#-----------
+time=5602704969
+mem_heap_B=541343953
+mem_heap_extra_B=5041839
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=53
+#-----------
+time=5603152449
+mem_heap_B=541147559
+mem_heap_extra_B=4820585
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=54
+#-----------
+time=5603599929
+mem_heap_B=540951165
+mem_heap_extra_B=4599331
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=55
+#-----------
+time=5604047409
+mem_heap_B=540754771
+mem_heap_extra_B=4378077
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=56
+#-----------
+time=5604494889
+mem_heap_B=540558377
+mem_heap_extra_B=4156823
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=57
+#-----------
+time=5604942369
+mem_heap_B=540361983
+mem_heap_extra_B=3935569
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=58
+#-----------
+time=5605389849
+mem_heap_B=540165589
+mem_heap_extra_B=3714299
+mem_stacks_B=0
+heap_tree=detailed
+n2: 540165589 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 536870912 0x10EC4E: alloc::raw_vec::RawVec<T,A>::reserve (in /home/peter/Documents/projects/packman/target/release/demo3)
+  n1: 536870912 0x10F060: <serde::de::impls::<impl serde::de::Deserialize for alloc::vec::Vec<T>>::deserialize::VecVisitor<T> as serde::de::Visitor>::visit_seq (in /home/peter/Documents/projects/packman/target/release/demo3)
+   n1: 536870912 0x110205: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+    n1: 536870912 0x111BB8: bincode::internal::deserialize (in /home/peter/Documents/projects/packman/target/release/demo3)
+     n1: 536870912 0x110D2F: packman::Pack<T>::load_from_path (in /home/peter/Documents/projects/packman/target/release/demo3)
+      n1: 536870912 0x111497: packman::Pack<T>::try_load_or_init (in /home/peter/Documents/projects/packman/target/release/demo3)
+       n1: 536870912 0x10E47F: demo3::main (in /home/peter/Documents/projects/packman/target/release/demo3)
+        n1: 536870912 0x10ED32: std::rt::lang_start::{{closure}} (in /home/peter/Documents/projects/packman/target/release/demo3)
+         n1: 536870912 0x124F42: {{closure}} (rt.rs:52)
+          n1: 536870912 0x124F42: do_call<closure-0,i32> (panicking.rs:348)
+           n1: 536870912 0x124F42: try<i32,closure-0> (panicking.rs:325)
+            n1: 536870912 0x124F42: catch_unwind<closure-0,i32> (panic.rs:394)
+             n1: 536870912 0x124F42: std::rt::lang_start_internal (rt.rs:51)
+              n0: 536870912 0x10EB11: main (in /home/peter/Documents/projects/packman/target/release/demo3)
+ n0: 3294677 in 31 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=59
+#-----------
+time=5605837329
+mem_heap_B=539969195
+mem_heap_extra_B=3493045
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=60
+#-----------
+time=5606284809
+mem_heap_B=539772801
+mem_heap_extra_B=3271791
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=61
+#-----------
+time=5606732289
+mem_heap_B=539576407
+mem_heap_extra_B=3050537
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=62
+#-----------
+time=5607179769
+mem_heap_B=539380013
+mem_heap_extra_B=2829283
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=63
+#-----------
+time=5607627249
+mem_heap_B=539183619
+mem_heap_extra_B=2608029
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=64
+#-----------
+time=5608074729
+mem_heap_B=538987225
+mem_heap_extra_B=2386759
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=65
+#-----------
+time=5608522209
+mem_heap_B=538790831
+mem_heap_extra_B=2165505
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=66
+#-----------
+time=5608969689
+mem_heap_B=538594437
+mem_heap_extra_B=1944251
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=67
+#-----------
+time=5609417169
+mem_heap_B=538398043
+mem_heap_extra_B=1722997
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=68
+#-----------
+time=5609864649
+mem_heap_B=538201649
+mem_heap_extra_B=1501743
+mem_stacks_B=0
+heap_tree=detailed
+n2: 538201649 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 536870912 0x10EC4E: alloc::raw_vec::RawVec<T,A>::reserve (in /home/peter/Documents/projects/packman/target/release/demo3)
+  n1: 536870912 0x10F060: <serde::de::impls::<impl serde::de::Deserialize for alloc::vec::Vec<T>>::deserialize::VecVisitor<T> as serde::de::Visitor>::visit_seq (in /home/peter/Documents/projects/packman/target/release/demo3)
+   n1: 536870912 0x110205: <&mut bincode::de::Deserializer<R,O> as serde::de::Deserializer>::deserialize_struct (in /home/peter/Documents/projects/packman/target/release/demo3)
+    n1: 536870912 0x111BB8: bincode::internal::deserialize (in /home/peter/Documents/projects/packman/target/release/demo3)
+     n1: 536870912 0x110D2F: packman::Pack<T>::load_from_path (in /home/peter/Documents/projects/packman/target/release/demo3)
+      n1: 536870912 0x111497: packman::Pack<T>::try_load_or_init (in /home/peter/Documents/projects/packman/target/release/demo3)
+       n1: 536870912 0x10E47F: demo3::main (in /home/peter/Documents/projects/packman/target/release/demo3)
+        n1: 536870912 0x10ED32: std::rt::lang_start::{{closure}} (in /home/peter/Documents/projects/packman/target/release/demo3)
+         n1: 536870912 0x124F42: {{closure}} (rt.rs:52)
+          n1: 536870912 0x124F42: do_call<closure-0,i32> (panicking.rs:348)
+           n1: 536870912 0x124F42: try<i32,closure-0> (panicking.rs:325)
+            n1: 536870912 0x124F42: catch_unwind<closure-0,i32> (panic.rs:394)
+             n1: 536870912 0x124F42: std::rt::lang_start_internal (rt.rs:51)
+              n0: 536870912 0x10EB11: main (in /home/peter/Documents/projects/packman/target/release/demo3)
+ n0: 1330737 in 31 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=69
+#-----------
+time=5610312129
+mem_heap_B=538005255
+mem_heap_extra_B=1280473
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=70
+#-----------
+time=5610759609
+mem_heap_B=537808861
+mem_heap_extra_B=1059219
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=71
+#-----------
+time=5611207089
+mem_heap_B=537612467
+mem_heap_extra_B=837965
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=72
+#-----------
+time=5611654569
+mem_heap_B=537416073
+mem_heap_extra_B=616711
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=73
+#-----------
+time=5612102049
+mem_heap_B=537219679
+mem_heap_extra_B=395457
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=74
+#-----------
+time=5612549529
+mem_heap_B=537023285
+mem_heap_extra_B=174203
+mem_stacks_B=0
+heap_tree=empty

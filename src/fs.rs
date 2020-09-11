@@ -19,7 +19,7 @@ const INODE_SIZE: u32 = 1024; // 1 kib reserved for a single inode
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub(crate) struct Superblock {
   magic: u64,                  // Magic
-  packman_version_number: u32, // packman version which is used to create this file
+  packman_version_number: u32, // packman fs version which is used to create this file
   id: u64,                     // u64 ID
   owner: Option<String>,       // Owner info; max 256 character len * 4 max byte
   date_created: u64,           // system time in UNIX timestamp (seconds)
@@ -206,7 +206,7 @@ impl Inode {
 }
 
 #[derive(Debug)]
-pub struct Details {
+pub struct Metadata {
   pub path: String,
   pub packman_version: u32,
   pub file_version: u64,
@@ -231,8 +231,11 @@ pub struct PackFile {
 }
 
 impl PackFile {
-  pub fn get_details(&self) -> Details {
-    Details {
+  pub fn get_id(&self) -> u64 {
+    self.superblock.id
+  }
+  pub fn metadata(&self) -> Metadata {
+    Metadata {
       path: self.path.to_str().unwrap_or("ERROR").to_owned(),
       packman_version: self.superblock.get_packman_version(),
       file_version: self.get_latest_inode().get_version(),

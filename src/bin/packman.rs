@@ -21,7 +21,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
       return Ok(());
     }
   };
-  let details = pack_file.get_details();
+  let details = pack_file.metadata();
   println!("PackFile details");
   println!("-----------------");
   println!("Path: {}", details.path);

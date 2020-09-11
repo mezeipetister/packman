@@ -85,7 +85,7 @@ impl Customer {
 }
 
 fn main() {
-  // let big_struct_data = build_big(5_000_000);
+  // let big_struct_data = build_big(3_000_000);
 
   // println!("Build done!");
 
@@ -93,10 +93,15 @@ fn main() {
   //   Pack::try_load_or_init(PathBuf::from("data"), "big_struct_demo3").unwrap();
 
   // let _ = std::mem::replace(big_struct.as_mut().unpack(), big_struct_data);
+  // println!("Save start");
+  // let start = std::time::Instant::now();
   // big_struct.save().unwrap();
+  // println!("Save finished in {:?}", start.elapsed());
 
+  let start = std::time::Instant::now();
   let big_struct: Pack<BigStruct> =
     Pack::try_load_or_init(PathBuf::from("data"), "big_struct_demo3").unwrap();
 
   println!("Object len is {}", big_struct.unpack().objects.len());
+  println!("Time elapsed {:?}", start.elapsed());
 }
