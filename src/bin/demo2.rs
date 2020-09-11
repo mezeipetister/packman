@@ -16,6 +16,10 @@ impl Customer {
   }
 }
 
+impl packman::TryFrom for Customer {
+  type TryFrom = Customer;
+}
+
 fn main() {
   let args: Vec<String> = std::env::args().collect();
   let name: String = match args.len() {
@@ -70,6 +74,11 @@ fn main() {
     Pack::load_from_path(PathBuf::from("data/demo_data_customer")).unwrap();
 
   println!("{:?}", c.unpack());
+
+  let d: Pack<Customer> =
+    Pack::try_load_or_init(PathBuf::from("data"), "demo_try").unwrap();
+
+  println!("{:?}", d.unpack());
 
   // Try load a non packfile
   // let mut b: PackFile<Customer> =

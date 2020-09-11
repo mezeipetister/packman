@@ -30,10 +30,7 @@ use serde::{Deserialize, Serialize};
 use std::convert::From;
 use std::default::Default;
 use std::fmt;
-use std::fs::File;
 use std::io;
-use std::io::{BufWriter, Read, Write};
-use std::iter::IntoIterator;
 use std::ops::{Deref, DerefMut};
 use std::path::{Path, PathBuf};
 
@@ -241,12 +238,8 @@ fn save_data_object<T>(path: &PathBuf, data: T) -> PackResult<()>
 where
   T: Serialize,
 {
-  // let mut buffer = BufWriter::new(File::create(path)?);
-  // // buffer.write_all(serde_yaml::to_string(&data)?.as_bytes())?;
-  // buffer.write_all(&bincode::serialize(&data).expect("bincode ser error"))?;
-  // buffer.flush()?;
-  // Ok(())
-  let mut pack_file = fs::PackFile::open(&path)?;
+  // TODO! Fix parameter flow
+  let mut pack_file = fs::PackFile::open_or_init(&path, 0, None, None, None)?;
   pack_file.write_data(&bincode::serialize(&data)?)?;
   Ok(())
 }
@@ -265,7 +258,7 @@ where
     + TryFrom
     + std::convert::From<<T as TryFrom>::TryFrom>,
 {
-  // TODO: Why this is not an infinite loop when T == TryFrom?
+  // TODO (?) Why this is not an infinite loop when T == TryFrom?
   pub fn try_load_from_path(path: PathBuf) -> PackResult<Pack<T>> {
     match Pack::<T>::load_from_path(path.clone()) {
       Ok(pack_t) => Ok(pack_t),
@@ -363,7 +356,7 @@ where
   /// rollback to backup, then return PackError.
   pub fn update<F, R>(&mut self, mut f: F) -> PackResult<R>
   where
-    F: FnMut(&mut T) -> R,
+    F: FnOnce(&mut T) -> R,
   {
     // First clone data as a backup.
     let backup = self.data.clone();
