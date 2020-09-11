@@ -82,7 +82,7 @@ impl Customer {
 }
 
 fn main() {
-  let big_struct_data = build_big(1_000);
+  let big_struct_data = build_big(1_000_000);
 
   let mut big_struct: Pack<BigStruct> =
     Pack::try_load_or_init(PathBuf::from("data"), "big_struct_demo3").unwrap();
