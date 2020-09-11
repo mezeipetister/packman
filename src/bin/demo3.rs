@@ -47,6 +47,9 @@ impl TryFrom for BigStruct {
 fn build_big(n: usize) -> BigStruct {
   let mut objects = Vec::new();
   for i in 0..n {
+    if i % 100_000 == 0 {
+      println!("{}", i);
+    }
     let o = Obj {
       id: generate_alphanumeric(10),
       name: generate_alphanumeric(20),
@@ -82,13 +85,18 @@ impl Customer {
 }
 
 fn main() {
-  let big_struct_data = build_big(1_000_000);
+  // let big_struct_data = build_big(5_000_000);
 
-  println!("Build done!");
+  // println!("Build done!");
 
-  let mut big_struct: Pack<BigStruct> =
+  // let mut big_struct: Pack<BigStruct> =
+  //   Pack::try_load_or_init(PathBuf::from("data"), "big_struct_demo3").unwrap();
+
+  // let _ = std::mem::replace(big_struct.as_mut().unpack(), big_struct_data);
+  // big_struct.save().unwrap();
+
+  let big_struct: Pack<BigStruct> =
     Pack::try_load_or_init(PathBuf::from("data"), "big_struct_demo3").unwrap();
 
-  let _ = std::mem::replace(big_struct.as_mut().unpack(), big_struct_data);
-  big_struct.save().unwrap();
+  println!("Object len is {}", big_struct.unpack().objects.len());
 }

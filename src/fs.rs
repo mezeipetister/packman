@@ -355,7 +355,7 @@ impl PackFile {
       Err(err) => match err {
         PackError::PckflDataError => {
           // TODO: here we should trace or log?
-          // TODO: also we must set the version to 0 for the current latest inode
+          // TODO!: also we must set the version to 0 for the current latest inode TRUNCATE
           self.get_backup_inode().load_data(&mut reader)
         }
         _ => Err(err),

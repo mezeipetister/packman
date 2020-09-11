@@ -188,6 +188,8 @@ pub struct Pack<T>
 where
   T: Serialize + Sized + Clone,
 {
+  // id: u64,
+  // dirty: bool,
   data: T,
   path: PathBuf,
 }
@@ -354,7 +356,7 @@ where
   /// then tries to save to FS, if SUCCESS
   /// returns R. If Fail, then doing data T
   /// rollback to backup, then return PackError.
-  pub fn update<F, R>(&mut self, mut f: F) -> PackResult<R>
+  pub fn update<F, R>(&mut self, f: F) -> PackResult<R>
   where
     F: FnOnce(&mut T) -> R,
   {
