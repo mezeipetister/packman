@@ -629,7 +629,7 @@ where
     }
     // TODO: Move file name creation to a central place!
     let mut p = (&self.path).clone();
-    p.push(&format!("{}.yml", item.get_id()));
+    p.push(&format!("{}", item.get_id()));
     let p = Pack {
       data: item,
       path: p,
@@ -654,6 +654,17 @@ where
     }
     self.data.push(item);
     Ok(())
+  }
+  pub fn remove_pack(
+    &mut self,
+    id: &<T as VecPackMember>::Out,
+  ) -> PackResult<T> {
+    if let Some(index) = self.data.iter().position(|x| x.get_id() == id) {
+      // TODO! implement packman::fs::remove_file(&path) instead and manage auto backup
+      std::fs::remove_file(&self.data[index].path)?;
+      return Ok(self.data.remove(index).into_inner());
+    }
+    Err(PackError::ObjectNotFound)
   }
   /// Find ID and returns &Pack<T>
   /// as an unmutable reference

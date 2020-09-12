@@ -56,13 +56,21 @@ fn main() {
   let mut data: VecPack<Customer> =
     VecPack::try_load_or_init(PathBuf::from("data/demo_vecpack")).unwrap();
 
-  for i in 0..100u32 {
-    let customer =
-      Customer::new(i, generate_alphanumeric(15), 10 + i, Address::default());
-    data.insert(customer).unwrap();
-  }
+  // for i in 0..100u32 {
+  //   let customer =
+  //     Customer::new(i, generate_alphanumeric(15), 10 + i, Address::default());
+  //   data.insert(customer).unwrap();
+  // }
+
+  data.remove_pack(&11u32).unwrap();
+
+  println!(
+    "Data at pos 11 is {:?}",
+    data.find_id(&11).unwrap().unpack()
+  );
 
   println!("Len of vecpack is {}", data.len());
   println!("Last item is {:?}", data.last().unwrap().unpack());
+  println!("Get by id 97 {:?}", data.find_id(&97u32).unwrap().unpack());
   println!("Get by id 4 {:?}", data.find_id(&4u32).unwrap().unpack());
 }
