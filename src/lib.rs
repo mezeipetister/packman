@@ -92,14 +92,6 @@ pub enum PackError {
   BincodeError(String),
 }
 
-// serde_yaml::Error to PackError
-// implementation
-impl From<serde_yaml::Error> for PackError {
-  fn from(from: serde_yaml::Error) -> Self {
-    PackError::SerializeError(from.to_string())
-  }
-}
-
 impl From<Box<bincode::ErrorKind>> for PackError {
   fn from(from: Box<bincode::ErrorKind>) -> Self {
     PackError::BincodeError(from.to_string())
