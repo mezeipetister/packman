@@ -2,6 +2,16 @@ use packman::*;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
+pub trait E {
+  fn e(&self) -> String;
+}
+
+impl E for &'static str {
+  fn e(&self) -> String {
+    self.to_string()
+  }
+}
+
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
 struct Car {
   pub id: String,
@@ -16,6 +26,7 @@ impl Car {
 }
 
 impl VecPackMember for Car {
+  type Out = str;
   fn get_id(&self) -> &str {
     &self.id
   }
@@ -23,13 +34,13 @@ impl VecPackMember for Car {
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
 struct Robot {
-  pub id: String,
+  pub id: u32,
   pub name: String,
   pub can_speak: bool,
 }
 
 impl Robot {
-  pub fn new(id: String, name: String, can_speak: bool) -> Self {
+  pub fn new(id: u32, name: String, can_speak: bool) -> Self {
     Robot {
       id,
       name,
@@ -39,7 +50,8 @@ impl Robot {
 }
 
 impl VecPackMember for Robot {
-  fn get_id(&self) -> &str {
+  type Out = u32;
+  fn get_id(&self) -> &u32 {
     &self.id
   }
 }
@@ -142,16 +154,16 @@ fn test_id_str() {
     VecPack::load_or_init(PathBuf::from("data/vecpack_test_id_str")).unwrap();
 
   robots
-    .insert(Robot::new("a".to_string(), "robot_a".to_string(), true))
+    .insert(Robot::new(1, "robot_a".to_string(), true))
     .unwrap();
   robots
-    .insert(Robot::new("b".to_string(), "robot_b".to_string(), false))
+    .insert(Robot::new(2, "robot_b".to_string(), false))
     .unwrap();
   robots
-    .insert(Robot::new("c".to_string(), "robot_c".to_string(), false))
+    .insert(Robot::new(3, "robot_c".to_string(), false))
     .unwrap();
 
-  assert_eq!(robots.find_id("a").is_ok(), true);
+  assert_eq!(robots.find_id(&2).is_ok(), true);
 }
 
 #[test]
@@ -159,11 +171,7 @@ fn test_mut_ref() {
   let mut robots: VecPack<Robot> =
     VecPack::load_or_init(PathBuf::from("data/vecpack_test_mut_red")).unwrap();
   robots
-    .insert(Robot::new(
-      "firstone".to_string(),
-      "Mini Robot".to_string(),
-      true,
-    ))
+    .insert(Robot::new(1, "Mini Robot".to_string(), true))
     .unwrap();
 
   let robots = robots.as_vec_mut();

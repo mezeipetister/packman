@@ -42,7 +42,7 @@ pub mod fs;
 /// contains Ok(T) or PackError
 ///
 /// ```rust
-/// use storaget::*;
+/// use packman::*;
 /// let res_ok: PackResult<i32> = Ok(32);
 /// let res_err: PackResult<i32> = Err(PackError::ObjectNotFound);
 /// ```
@@ -224,14 +224,14 @@ where
 
 /// This trait defines the requirements
 /// to be a member of a VecPack<T>
-pub trait VecPackMember: Serialize + Sized + Clone {
-  type Out: PartialEq + std::fmt::Display;
+pub trait VecPackMember: Serialize + Clone {
+  type Out: PartialEq + std::fmt::Display + ?Sized;
   // type Target: fmt::Display + std::cmp::PartialEq;
   fn get_id(&self) -> &Self::Out;
 }
 
 pub trait TryFrom {
-  type TryFrom: for<'de> Deserialize<'de> + Serialize + Default + Sized + Clone;
+  type TryFrom: for<'de> Deserialize<'de> + Serialize + Default + Clone;
 }
 
 /// Save DATA OBJECT to its path
