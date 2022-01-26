@@ -207,7 +207,7 @@ impl Default for Sex2 {
 }
 
 #[test]
-fn test_field_order_update() {
+fn test_changed_field_order_updated_enum() {
     {
         let mut u1: Pack<User> =
             Pack::load_or_init(PathBuf::from("data/pack_test"), "test_user")
